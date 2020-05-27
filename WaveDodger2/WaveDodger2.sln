@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29806.167
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WaveDodger2", "WaveDodger2.csproj", "{540610E5-F82C-4BFA-9B68-16DA61262ECE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{540610E5-F82C-4BFA-9B68-16DA61262ECE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{540610E5-F82C-4BFA-9B68-16DA61262ECE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{540610E5-F82C-4BFA-9B68-16DA61262ECE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{540610E5-F82C-4BFA-9B68-16DA61262ECE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6CEB684D-09CB-457D-A53B-C918BEE05901}
+	EndGlobalSection
+EndGlobal
