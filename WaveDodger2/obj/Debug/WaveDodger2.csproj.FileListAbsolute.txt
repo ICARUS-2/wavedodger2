@@ -1,0 +1,6 @@
+C:\Users\Icarus\Desktop\git-repo\wavedodger2\WaveDodger2\bin\Debug\WaveDodger2.exe.config
+C:\Users\Icarus\Desktop\git-repo\wavedodger2\WaveDodger2\bin\Debug\WaveDodger2.exe
+C:\Users\Icarus\Desktop\git-repo\wavedodger2\WaveDodger2\bin\Debug\WaveDodger2.pdb
+C:\Users\Icarus\Desktop\git-repo\wavedodger2\WaveDodger2\obj\Debug\WaveDodger2.csprojAssemblyReference.cache
+C:\Users\Icarus\Desktop\git-repo\wavedodger2\WaveDodger2\obj\Debug\WaveDodger2.exe
+C:\Users\Icarus\Desktop\git-repo\wavedodger2\WaveDodger2\obj\Debug\WaveDodger2.pdb

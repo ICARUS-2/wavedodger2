@@ -1,21 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using static System.Console;
 
 namespace WaveDodger2
 {
     class Player
     {
-        private const char _DEFAULT_PLAYER_CHAR = 'X';
+        private const char DEFAULT_PLAYER_CHAR = 'X';
         private char _playerChar;
 
-        private const int _DEFAULT_SPEED = 1;
-        private const int _DEFAULT_STARTING_LIVES = 3;
-        private const int _DEFAULT_X_POS = 2;
-        private const int _DEFAULY_Y_POS = 2;
+        private const int DEFAULT_SPEED = 1;
+        private const int DEFAULT_STARTING_LIVES = 3;
+        private const int DEFAULT_X_POS = 2;
+        private const int DEFAULT_Y_POS = 2;
         private int _speed;
         private int _xPos;
         private int _yPos;
@@ -24,15 +20,15 @@ namespace WaveDodger2
         private int _startingLives;
         private int _livesRemaining;
 
-        private const ConsoleColor _DEFAULT_FORE_COLOR = ConsoleColor.Green;
-        private const ConsoleColor _DEFAULT_BACK_COLOR = ConsoleColor.Magenta;
+        private const ConsoleColor DEFAULT_FORE_COLOR = ConsoleColor.Green;
+        private const ConsoleColor DEFAULT_BACK_COLOR = ConsoleColor.Magenta;
         private ConsoleColor _foreColor;
         private ConsoleColor _backColor;
 
-        private const ConsoleKey _DEFAULT_KEY_UP = ConsoleKey.W;
-        private const ConsoleKey _DEFAULT_KEY_DOWN = ConsoleKey.S;
-        private const ConsoleKey _DEFAULT_KEY_LEFT = ConsoleKey.A;
-        private const ConsoleKey _DEFAULT_KEY_RIGHT = ConsoleKey.D;
+        private const ConsoleKey DEFAULT_KEY_UP = ConsoleKey.W;
+        private const ConsoleKey DEFAULT_KEY_DOWN = ConsoleKey.S;
+        private const ConsoleKey DEFAULT_KEY_LEFT = ConsoleKey.A;
+        private const ConsoleKey DEFAULT_KEY_RIGHT = ConsoleKey.D;
         private ConsoleKey _keyUp;
         private ConsoleKey _keyDown;
         private ConsoleKey _keyLeft;
@@ -40,20 +36,74 @@ namespace WaveDodger2
 
         public Player()
         {
-            PlayerChar = _DEFAULT_PLAYER_CHAR;
-            Speed = _DEFAULT_SPEED;
-            XPos = _DEFAULT_X_POS;
-            YPos = _DEFAULY_Y_POS;
-            StartingLives = _DEFAULT_STARTING_LIVES;
+            PlayerChar = DEFAULT_PLAYER_CHAR;
+            Speed = DEFAULT_SPEED;
+            XPos = DEFAULT_X_POS;
+            YPos = DEFAULT_Y_POS;
+            StartingLives = DEFAULT_STARTING_LIVES;
             LivesRemaining = StartingLives;
-            ForeColor = _DEFAULT_FORE_COLOR;
-            BackColor = _DEFAULT_BACK_COLOR;
-            KeyUp = _DEFAULT_KEY_UP;
-            KeyDown = _DEFAULT_KEY_DOWN;
-            KeyLeft = _DEFAULT_KEY_LEFT;
-            KeyRight = _DEFAULT_KEY_RIGHT;
+            ForeColor = DEFAULT_FORE_COLOR;
+            BackColor = DEFAULT_BACK_COLOR;
+            KeyUp = DEFAULT_KEY_UP;
+            KeyDown = DEFAULT_KEY_DOWN;
+            KeyLeft = DEFAULT_KEY_LEFT;
+            KeyRight = DEFAULT_KEY_RIGHT;
         }
 
+        #region//METHODS
+        public void Move(ConsoleKey userKeyPress)
+        {
+            OldXPos = XPos;
+            OldYPos = YPos;
+
+            if (userKeyPress == KeyUp) //decrease Y coord
+            {
+                YPos -= Speed;
+            }
+
+            if (userKeyPress == KeyDown) //increase Y coord
+            {
+                YPos += Speed;
+            }
+
+            if (userKeyPress == KeyLeft) //decrease X coord
+            {
+                XPos -= Speed;
+            }
+
+            if (userKeyPress == KeyRight) //increase X coord
+            {
+                XPos += Speed;
+            }
+        }
+
+        public void Draw()
+        {
+            if (OldXPos != XPos || OldYPos != YPos)
+            {
+                SetCursorPosition(OldXPos, OldYPos);
+                WriteLine(" ");
+                SetCursorPosition(XPos, YPos);
+                WriteLine(PlayerChar);
+            }
+        }
+
+        public void LoseLife()
+        {
+            LivesRemaining--;
+        }
+
+        public void ResetLives()
+        {
+            LivesRemaining = StartingLives;
+        }
+
+        public bool Collide(Enemy[] enemies)
+        {
+            //if players position is equal to the position of an enemy return true
+            return true;
+        }
+        #endregion  
 
         #region//PROPERTIES
 
@@ -154,6 +204,8 @@ namespace WaveDodger2
             {
                 if (value < 0)
                     throw new ArgumentException("ERROR: PLAYER STARTING LIVES CANNOT BE NEGATIVE", "_startingLives");
+
+                _startingLives = value;
             }
         }
 
@@ -165,8 +217,7 @@ namespace WaveDodger2
             }
             set
             {
-                if (value < 0)
-                    throw new ArgumentException("ERROR: PLAYER LIVES REMAINING CANNOT BE NEGATIVE", "_livesRemaining");
+                _livesRemaining = value;
             }
         }
 
@@ -244,33 +295,5 @@ namespace WaveDodger2
 
 
         #endregion
-
-        #region//METHODS
-        public void Move(ConsoleKey userKeyPress)
-        {
-
-        }
-
-        public void Draw()
-        {
-
-        }
-
-        public void LoseLife()
-        {
-            LivesRemaining--;
-        }
-
-        public void ResetLives()
-        {
-            LivesRemaining = StartingLives;
-        }
-
-        public bool Collide(Enemy[] enemies)
-        {
-            //if players position is equal to the position of an enemy return true
-            return true;
-        }
-        #endregion  
     }
 }
