@@ -4,12 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using static System.Console;
-
+using System.Diagnostics;
+using System.Runtime.InteropServices;
 
 namespace WaveDodger2
 {
     class GameArea
     {
+
         private const char DEFAULT_SCREENGRASS_CHAR = '.';
         private const char DEFAULT_BORDER_CHAR = '#';
         private char _screengrassChar; //the character background of the level
@@ -25,9 +27,16 @@ namespace WaveDodger2
         private ConsoleColor _borderBackColor; //background color of the border
 
         private const int DEFAULT_WIDTH = 100;
-        private const int DEFAULT_HEIGHT = 30;
-        private int _width;
-        private int _height;
+        private const int DEFAULT_HEIGHT = 35;
+        private const int DEFAULT_BORDER_WIDTH = 15;
+        private int _width; //width of the main play area NOT COUNTING THE BORDER SPACE
+        private int _height; //height of the screen
+        private int _borderWidth; //width of the blank areas flanking both sides of the level
+
+        private int _upLimit; //lowest possible y coord the player can hit
+        private int _downLimit; //highest possible y coord the player can hit
+        private int _leftLimit; //lowest possible x coord the player can hit
+        private int _rightLimit; //highest possible x coord the player can hit
 
 
         public GameArea()
@@ -40,48 +49,77 @@ namespace WaveDodger2
             BorderBackColor = DEFAULT_BORDER_BACKCOLOR;
             Width = DEFAULT_WIDTH;
             Height = DEFAULT_HEIGHT;
+            BorderWidth = DEFAULT_BORDER_WIDTH;
+            SetLimits();
+        }
+
+        private void SetLimits()
+        {
+            UpLimit = 1;
+            DownLimit = Height - 2;
+            LeftLimit = BorderWidth;
+            RightLimit = BorderWidth + Width - 1;
         }
 
         public void Render()
         {
-            SetCursorPosition(0,0);
-
+            SetCursorPosition(0, 0);
             //draws top border line
             ForegroundColor = BorderForeColor;
             BackgroundColor = BorderBackColor;
-            for (int i = 0; i < Width; i++)
+            for (int i = 0; i < (2 * BorderWidth + Width); i++)
             {
                 Write(BorderChar);
             }
 
-            //draws main area
+            //draws the area in between the top and bottom border lines
             for (int i = 0; i < Height - 2; i++)
             {
+                WriteLine();
+                //draws the left border
                 ForegroundColor = BorderForeColor;
                 BackgroundColor = BorderBackColor;
-                WriteLine();
                 Write(BorderChar);
-                for (int j = 0; j < Width - 2; j++)
+                BackgroundColor = DEFAULT_BORDER_BACKCOLOR;
+                for (int j = 0; j < BorderWidth - 2; j++)
                 {
-                    ForegroundColor = ScreengrassForeColor;
-                    BackgroundColor = ScreengrassBackColor;
+                    Write(" ");
+                }
+                ForegroundColor = BorderForeColor;
+                BackgroundColor = BorderBackColor;
+                Write(BorderChar);
+
+                ForegroundColor = ScreengrassForeColor;
+                BackgroundColor = ScreengrassBackColor;
+                //draws the main game area
+                for (int j = 0; j < Width; j++)
+                {
                     Write(ScreengrassChar);
+                }
+                //draws the right border
+                ForegroundColor = BorderForeColor;
+                BackgroundColor = BorderBackColor;
+                Write(BorderChar);
+                BackgroundColor = DEFAULT_BORDER_BACKCOLOR;
+                for (int j = 0; j < BorderWidth - 2; j++)
+                {
+                    Write(" ");
                 }
                 ForegroundColor = BorderForeColor;
                 BackgroundColor = BorderBackColor;
                 Write(BorderChar);
             }
 
-            //draws bottom border line
             WriteLine();
+            //draws the bottom border line
             ForegroundColor = BorderForeColor;
             BackgroundColor = BorderBackColor;
-            for (int i = 0; i < Width; i++)
+            for (int i = 0; i < (2 * BorderWidth + Width); i++)
             {
                 Write(BorderChar);
             }
         }
-
+        
         #region//PROPERTIES
         public char ScreengrassChar
         {
@@ -180,12 +218,88 @@ namespace WaveDodger2
             set
             {
                 if (value < 0)
-                    throw new ArgumentException("ERROR: GAME AREA HEIGHT CANNOT BE NEGATIVE","_height");
+                    throw new ArgumentException("ERROR: GAME AREA HEIGHT CANNOT BE NEGATIVE", "_height");
 
                 _height = value;
             }
-              
+
         }
+
+        public int BorderWidth
+        {
+            get
+            {
+                return _borderWidth;
+            }
+            set
+            {
+                if (value < 0)
+                    throw new ArgumentException("ERROR: BORDER WIDTH CANNOT BE NEGATIVE","_borderWidth");
+
+                _borderWidth = value;
+            }
+        }
+
+        public int UpLimit
+        {
+            get
+            {
+                return _upLimit;
+            }
+            set
+            {
+                if (value < 0)
+                    throw new ArgumentException("ERROR: TOP COLLISION LIMIT CANNOT BE NEGATIVE","_upLimit");
+
+                _upLimit = value;
+            }
+        }
+
+        public int DownLimit
+        {
+            get
+            {
+                return _downLimit;
+            }
+            set
+            {
+                if (value < 0)
+                    throw new ArgumentException("ERROR: BOTTOM COLLISION LIMIT CANNOT BE NEGATIVE","_downLimit");
+
+                _downLimit = value;
+            }
+        }
+
+        public int LeftLimit
+        {
+            get
+            {
+                return _leftLimit;
+            }
+            set
+            {
+                if (value < 0)
+                    throw new ArgumentException("ERROR: LEFT COLLISION LIMIT CANNOT BE NEGATIVE","_leftLimit");
+
+                _leftLimit = value;
+            }
+        }
+
+        public int RightLimit
+        {
+            get
+            {
+                return _rightLimit;
+            }
+            set
+            {
+                if (value < 0)
+                    throw new ArgumentException("ERROR: RIGHT COLLISION LIMIT CANNOT BE NEGATIVE","_rightLimit");
+
+                _rightLimit = value;
+            }
+        }
+
 
 
         #endregion

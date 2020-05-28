@@ -50,43 +50,60 @@ namespace WaveDodger2
             KeyRight = DEFAULT_KEY_RIGHT;
         }
 
-        #region//METHODS
-        public void Move(ConsoleKey userKeyPress)
+        #region//EXTERNAL METHODS
+        public void Move(ConsoleKey userKeyPress, GameArea area)
         {
             OldXPos = XPos;
             OldYPos = YPos;
 
-            if (userKeyPress == KeyUp) //decrease Y coord
+            //move player up
+            if (userKeyPress == KeyUp && YPos != area.UpLimit) //up = decrease Y coord
             {
                 YPos -= Speed;
             }
 
-            if (userKeyPress == KeyDown) //increase Y coord
+            //move player down
+            if (userKeyPress == KeyDown && YPos != area.DownLimit) //down = increase Y coord
             {
                 YPos += Speed;
             }
 
-            if (userKeyPress == KeyLeft) //decrease X coord
+            //move player left
+            if (userKeyPress == KeyLeft && XPos != area.LeftLimit) //left = decrease X coord
             {
                 XPos -= Speed;
             }
 
-            if (userKeyPress == KeyRight) //increase X coord
+            //move player right
+            if (userKeyPress == KeyRight && XPos != area.RightLimit) //right = increase X coord
             {
                 XPos += Speed;
             }
         }
 
-        public void Draw()
+        public void Draw(GameArea area)
         {
             if (OldXPos != XPos || OldYPos != YPos)
             {
                 SetCursorPosition(OldXPos, OldYPos);
-                WriteLine(" ");
+                ForegroundColor = area.ScreengrassForeColor;
+                BackgroundColor = area.ScreengrassBackColor;
+                WriteLine(area.ScreengrassChar);
+
                 SetCursorPosition(XPos, YPos);
+                ForegroundColor = ForeColor;
+                BackgroundColor = BackColor;
                 WriteLine(PlayerChar);
             }
         }
+
+        public void InitializePosition(GameArea area)
+        {
+            XPos = (area.BorderWidth * 2 + area.Width) / 2;
+            YPos = area.Height / 2;
+            InitializeOnScreen();
+        }
+
 
         public void LoseLife()
         {
@@ -103,7 +120,17 @@ namespace WaveDodger2
             //if players position is equal to the position of an enemy return true
             return true;
         }
-        #endregion  
+        #endregion
+
+        #region//INTERNAL METHODS
+        private void InitializeOnScreen()
+        {
+            SetCursorPosition(XPos, YPos);
+            ForegroundColor = ForeColor;
+            BackgroundColor = BackColor;
+            Write(PlayerChar);
+        }
+        #endregion
 
         #region//PROPERTIES
 
@@ -141,10 +168,10 @@ namespace WaveDodger2
             }
             set
             {
-                _xPos = value;
-
                 if (_xPos < 0)
                     throw new ArgumentException("ERROR: PLAYER CANNOT EXIST OUTSIDE OF THE CONSOLE", "_xPos");
+
+                _xPos = value;
             }
         }
 
@@ -156,10 +183,10 @@ namespace WaveDodger2
             }
             set
             {
-                _yPos = value;
-
                 if (_yPos < 0)
                     throw new ArgumentException("ERROR: PLAYER CANNOT EXIST OUTSIDE OF THE CONSOLE", "_yPos");
+
+                _yPos = value;
             }
         }
 
@@ -172,10 +199,10 @@ namespace WaveDodger2
             }
             set
             {
-                _oldXPos = value;
-
                 if (_oldXPos < 0)
                     throw new ArgumentException("ERROR: PLAYER CANNOT EXIST OUTSIDE OF THE CONSOLE", "_oldXPos");
+
+                _oldXPos = value;
             }
         }
 
@@ -187,10 +214,10 @@ namespace WaveDodger2
             }
             set
             {
-                _oldYPos = value;
-
                 if (_oldYPos < 0)
                     throw new ArgumentException("ERROR: PLAYER CANNOT EXIST OUTSIDE OF THE CONSOLE", "_oldYPos");
+
+                _oldYPos = value;
             }
         }
 
