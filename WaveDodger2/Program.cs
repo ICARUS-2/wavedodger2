@@ -16,9 +16,22 @@ namespace WaveDodger2
         public static extern bool ShowWindow(System.IntPtr hWnd, int cmdShow);
         static void Main(string[] args)
         {
-            Maximize();
-            CursorVisible = false;
-            Test();
+            try
+            {
+                Maximize();
+                CursorVisible = false;
+                Test();
+            }
+            catch (Exception ex)
+            {
+                Clear();
+                SetCursorPosition(0,0);
+                ForegroundColor = ConsoleColor.DarkRed;
+                Write("ERROR: EXCEPTION THROWN");
+                Write(ex.StackTrace);
+                WriteLine("\n\nDETAILS: {0}", ex.Message);
+                ReadKey();
+            }
         }
         private static void Maximize()
         {

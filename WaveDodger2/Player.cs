@@ -22,8 +22,8 @@ namespace WaveDodger2
 
         private const ConsoleColor DEFAULT_FORE_COLOR = ConsoleColor.Green;
         private const ConsoleColor DEFAULT_BACK_COLOR = ConsoleColor.Magenta;
-        private ConsoleColor _foreColor;
-        private ConsoleColor _backColor;
+        private ConsoleColor _playerForeColor;
+        private ConsoleColor _playerBackColor;
 
         private const ConsoleKey DEFAULT_KEY_UP = ConsoleKey.W;
         private const ConsoleKey DEFAULT_KEY_DOWN = ConsoleKey.S;
@@ -155,7 +155,7 @@ namespace WaveDodger2
             set
             {
                 if (value < 0)
-                    throw new ArgumentException("ERROR: PLAYER SPEED INCREMENT CANNOT BE NEGATIVE", "_speed");
+                    throw new ArgumentException("PLAYER SPEED INCREMENT CANNOT BE NEGATIVE", "_speed");
                 _speed = value;
             }
         }
@@ -169,7 +169,7 @@ namespace WaveDodger2
             set
             {
                 if (_xPos < 0)
-                    throw new ArgumentException("ERROR: PLAYER CANNOT EXIST OUTSIDE OF THE CONSOLE", "_xPos");
+                    throw new ArgumentException("PLAYER CANNOT EXIST OUTSIDE OF THE CONSOLE", "_xPos");
 
                 _xPos = value;
             }
@@ -184,7 +184,7 @@ namespace WaveDodger2
             set
             {
                 if (_yPos < 0)
-                    throw new ArgumentException("ERROR: PLAYER CANNOT EXIST OUTSIDE OF THE CONSOLE", "_yPos");
+                    throw new ArgumentException("PLAYER CANNOT EXIST OUTSIDE OF THE CONSOLE", "_yPos");
 
                 _yPos = value;
             }
@@ -200,7 +200,7 @@ namespace WaveDodger2
             set
             {
                 if (_oldXPos < 0)
-                    throw new ArgumentException("ERROR: PLAYER CANNOT EXIST OUTSIDE OF THE CONSOLE", "_oldXPos");
+                    throw new ArgumentException("PLAYER CANNOT EXIST OUTSIDE OF THE CONSOLE", "_oldXPos");
 
                 _oldXPos = value;
             }
@@ -215,7 +215,7 @@ namespace WaveDodger2
             set
             {
                 if (_oldYPos < 0)
-                    throw new ArgumentException("ERROR: PLAYER CANNOT EXIST OUTSIDE OF THE CONSOLE", "_oldYPos");
+                    throw new ArgumentException("PLAYER CANNOT EXIST OUTSIDE OF THE CONSOLE", "_oldYPos");
 
                 _oldYPos = value;
             }
@@ -230,7 +230,7 @@ namespace WaveDodger2
             set
             {
                 if (value < 0)
-                    throw new ArgumentException("ERROR: PLAYER STARTING LIVES CANNOT BE NEGATIVE", "_startingLives");
+                    throw new ArgumentException("PLAYER STARTING LIVES CANNOT BE NEGATIVE", "_startingLives");
 
                 _startingLives = value;
             }
@@ -252,11 +252,11 @@ namespace WaveDodger2
         {
             get
             {
-                return _foreColor;
+                return _playerForeColor;
             }
             set
             {
-                _foreColor = value;
+                _playerForeColor = value;
             }
         }
 
@@ -264,11 +264,11 @@ namespace WaveDodger2
         {
             get
             {
-                return _backColor;
+                return _playerBackColor;
             }
             set
             {
-                _backColor = value;
+                _playerBackColor = value;
             }
         }
 

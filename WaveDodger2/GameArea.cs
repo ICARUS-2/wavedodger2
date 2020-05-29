@@ -202,7 +202,7 @@ namespace WaveDodger2
             set
             {
                 if (value < 0)
-                    throw new ArgumentException("ERROR: GAME AREA WIDTH CANNOT BE NEGATIVE","_width");
+                    throw new ArgumentException("GAME AREA WIDTH CANNOT BE NEGATIVE","_width");
 
                 _width = value;
             }               
@@ -218,7 +218,7 @@ namespace WaveDodger2
             set
             {
                 if (value < 0)
-                    throw new ArgumentException("ERROR: GAME AREA HEIGHT CANNOT BE NEGATIVE", "_height");
+                    throw new ArgumentException("GAME AREA HEIGHT CANNOT BE NEGATIVE", "_height");
 
                 _height = value;
             }
@@ -234,7 +234,7 @@ namespace WaveDodger2
             set
             {
                 if (value < 0)
-                    throw new ArgumentException("ERROR: BORDER WIDTH CANNOT BE NEGATIVE","_borderWidth");
+                    throw new ArgumentException("BORDER WIDTH CANNOT BE NEGATIVE","_borderWidth");
 
                 _borderWidth = value;
             }
@@ -249,7 +249,7 @@ namespace WaveDodger2
             set
             {
                 if (value < 0)
-                    throw new ArgumentException("ERROR: TOP COLLISION LIMIT CANNOT BE NEGATIVE","_upLimit");
+                    throw new ArgumentException("TOP COLLISION LIMIT CANNOT BE NEGATIVE","_upLimit");
 
                 _upLimit = value;
             }
@@ -264,7 +264,7 @@ namespace WaveDodger2
             set
             {
                 if (value < 0)
-                    throw new ArgumentException("ERROR: BOTTOM COLLISION LIMIT CANNOT BE NEGATIVE","_downLimit");
+                    throw new ArgumentException("BOTTOM COLLISION LIMIT CANNOT BE NEGATIVE","_downLimit");
 
                 _downLimit = value;
             }
@@ -279,7 +279,7 @@ namespace WaveDodger2
             set
             {
                 if (value < 0)
-                    throw new ArgumentException("ERROR: LEFT COLLISION LIMIT CANNOT BE NEGATIVE","_leftLimit");
+                    throw new ArgumentException("LEFT COLLISION LIMIT CANNOT BE NEGATIVE","_leftLimit");
 
                 _leftLimit = value;
             }
@@ -294,7 +294,7 @@ namespace WaveDodger2
             set
             {
                 if (value < 0)
-                    throw new ArgumentException("ERROR: RIGHT COLLISION LIMIT CANNOT BE NEGATIVE","_rightLimit");
+                    throw new ArgumentException("RIGHT COLLISION LIMIT CANNOT BE NEGATIVE","_rightLimit");
 
                 _rightLimit = value;
             }
