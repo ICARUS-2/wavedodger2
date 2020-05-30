@@ -42,19 +42,31 @@ namespace WaveDodger2
 
         static void Test()
         {
+            int nCoins = 2;
+            Random rnd = new Random();
+            Enemy[] enemies = null;
             Player player1 = new Player();
             GameArea area = new GameArea();
+            Coin[] coins = Coin.GenerateCoinArray(nCoins, rnd, area);
+
             area.Render();
+            Coin.Render(coins);
+
             ConsoleKey userKey;
             player1.InitializePosition(area);
             while (1 < 2)
             {
+                Maximize();
                 while (KeyAvailable)
                 {
                     userKey = ReadKey(true).Key;
                     player1.Move(userKey, area);
                     player1.Draw(area);
+                    player1.CheckCollision(enemies, coins);
                 }//end of inner while
+
+                if (player1.CoinsCollected == nCoins)
+                    Environment.Exit(0);
             }//end of outer while
         }//end of method
     }//end of class

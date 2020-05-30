@@ -12,13 +12,13 @@ namespace WaveDodger2
     class GameArea
     {
 
-        private const char DEFAULT_SCREENGRASS_CHAR = '.';
-        private const char DEFAULT_BORDER_CHAR = '#';
+        private const char DEFAULT_SCREENGRASS_CHAR = '█';
+        private const char DEFAULT_BORDER_CHAR = '█';
         private char _screengrassChar; //the character background of the level
         private char _borderChar; //the character border around the level and display
-
-        private const ConsoleColor DEFAULT_SCREENGRASS_FORECOLOR = ConsoleColor.White;
-        private const ConsoleColor DEFAULT_SCREENGRASS_BACKCOLOR = ConsoleColor.Black;
+        
+        private const ConsoleColor DEFAULT_SCREENGRASS_FORECOLOR = ConsoleColor.Blue;
+        private const ConsoleColor DEFAULT_SCREENGRASS_BACKCOLOR = ConsoleColor.Green;
         private const ConsoleColor DEFAULT_BORDER_FORECOLOR = ConsoleColor.White;
         private const ConsoleColor DEFAULT_BORDER_BACKCOLOR = ConsoleColor.Black;
         private ConsoleColor _screengrassForeColor; //foreground color of the screen background
@@ -108,6 +108,7 @@ namespace WaveDodger2
                 ForegroundColor = BorderForeColor;
                 BackgroundColor = BorderBackColor;
                 Write(BorderChar);
+                ResetColor();
             }
 
             WriteLine();
@@ -118,6 +119,7 @@ namespace WaveDodger2
             {
                 Write(BorderChar);
             }
+            ResetColor();
         }
         
         #region//PROPERTIES

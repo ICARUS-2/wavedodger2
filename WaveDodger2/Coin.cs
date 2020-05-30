@@ -29,14 +29,68 @@ namespace WaveDodger2
             CoinBackColor = DEFAULT_COIN_BACKCOLOR;
             CoinXPos = 0;
             CoinYPos = 0;
+            Collected = DEFAULT_COLLECTED_VALUE;
         }
 
         #region//EXTERNAL METHODS
-        public void Initialize(GameArea area)
+       
+        public void WriteOnScreen()
         {
-            Random rnd = new Random();
-            CoinXPos = rnd.Next(area.LeftLimit, area.RightLimit + 1);
-            CoinYPos = rnd.Next(area.UpLimit, area.DownLimit + 1);
+            if (!Collected)
+            {
+                SetCursorPosition(CoinXPos, CoinYPos);
+                ForegroundColor = CoinForeColor;
+                BackgroundColor = CoinBackColor;
+                WriteLine(CoinChar);
+                ResetColor();
+            }
+        }
+
+        public void Collect(Player player)
+        {
+            Collected = true;
+            player.CoinsCollected++;
+        }
+
+        public static Coin[] GenerateCoinArray(int numberOfCoins, Random rnd, GameArea area)
+        {
+            Coin[] coins = new Coin[numberOfCoins];
+            int tempX;
+            int tempY;
+
+            for (int i = 0; i < coins.Length; i++)
+                coins[i] = new Coin();
+
+            coins[0].CoinXPos = rnd.Next(area.LeftLimit, area.RightLimit + 1); 
+            coins[0].CoinYPos = rnd.Next(area.UpLimit, area.DownLimit + 1);
+
+            for (int i = 0; i < coins.Length; i++)
+            {
+                tempX = rnd.Next(area.LeftLimit, area.RightLimit + 1);
+                tempY = rnd.Next(area.UpLimit, area.DownLimit + 1);
+
+                for(int j = 0; j < i; j++)
+                {
+                    if (tempX != coins[j].CoinXPos && tempY != coins[j].CoinYPos)
+                    {
+                        coins[i].CoinXPos = tempX;
+                        coins[i].CoinYPos = tempY;
+                    }
+                    else
+                    {
+                        i--;
+                    }
+                }
+            }
+            return coins;
+        }
+
+        public static void Render(Coin[] coins)
+        {
+            for (int i = 0; i < coins.Length; i++)
+            {
+                coins[i].WriteOnScreen();
+            }
         }
         #endregion
 

@@ -19,6 +19,7 @@ namespace WaveDodger2
         private int _oldYPos;
         private int _startingLives;
         private int _livesRemaining;
+        private int _coinsCollected;
 
         private const ConsoleColor DEFAULT_FORE_COLOR = ConsoleColor.Green;
         private const ConsoleColor DEFAULT_BACK_COLOR = ConsoleColor.Magenta;
@@ -42,6 +43,7 @@ namespace WaveDodger2
             YPos = DEFAULT_Y_POS;
             StartingLives = DEFAULT_STARTING_LIVES;
             LivesRemaining = StartingLives;
+            CoinsCollected = 0;
             ForeColor = DEFAULT_FORE_COLOR;
             BackColor = DEFAULT_BACK_COLOR;
             KeyUp = DEFAULT_KEY_UP;
@@ -94,6 +96,7 @@ namespace WaveDodger2
                 ForegroundColor = ForeColor;
                 BackgroundColor = BackColor;
                 WriteLine(PlayerChar);
+                ResetColor();
             }
         }
 
@@ -115,10 +118,15 @@ namespace WaveDodger2
             LivesRemaining = StartingLives;
         }
 
-        public bool Collide(Enemy[] enemies)
+        public void ResetPlayerCoinCount()
         {
+            CoinsCollected = 0;
+        }
+
+        public void CheckCollision(Enemy[] enemies, Coin[] coins)
+        {
+            CheckCoinCollision(coins);
             //if players position is equal to the position of an enemy return true
-            return true;
         }
         #endregion
 
@@ -129,6 +137,21 @@ namespace WaveDodger2
             ForegroundColor = ForeColor;
             BackgroundColor = BackColor;
             Write(PlayerChar);
+            ResetColor();
+        }
+
+        private void CheckEnemyCollision()
+        {
+
+        }
+
+        private void CheckCoinCollision(Coin[] coins)
+        {
+            for (int i = 0; i < coins.Length; i++)
+            {
+                if ((XPos == coins[i].CoinXPos) && (YPos == coins[i].CoinYPos) && (!coins[i].Collected))
+                    coins[i].Collect(this);
+            }
         }
         #endregion
 
@@ -245,6 +268,21 @@ namespace WaveDodger2
             set
             {
                 _livesRemaining = value;
+            }
+        }
+
+        public int CoinsCollected
+        {
+            get
+            {
+                return _coinsCollected;
+            }
+            set
+            {
+                _coinsCollected = value;
+
+                if (_coinsCollected < 0)
+                    throw new ArgumentException("PLAYER CANNOT HAVE NEGATIVE COINS COLLECTED","_coinsCollected");
             }
         }
 
