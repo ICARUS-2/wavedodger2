@@ -48,7 +48,6 @@ namespace WaveDodger2
             Player player1 = new Player();
             GameArea area = new GameArea();
             Coin[] coins = Coin.GenerateCoinArray(nCoins, rnd, area, player1);
-            player1.LoseLife();player1.LoseLife();player1.LoseLife();
             area.Render();
             Coin.Render(coins);
 
