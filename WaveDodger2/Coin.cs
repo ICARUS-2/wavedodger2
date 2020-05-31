@@ -52,7 +52,7 @@ namespace WaveDodger2
             player.CoinsCollected++;
         }
 
-        public static Coin[] GenerateCoinArray(int numberOfCoins, Random rnd, GameArea area)
+        public static Coin[] GenerateCoinArray(int numberOfCoins, Random rnd, GameArea area, Player player)
         {
             Coin[] coins = new Coin[numberOfCoins];
             int tempX;
@@ -70,8 +70,8 @@ namespace WaveDodger2
                 tempY = rnd.Next(area.UpLimit, area.DownLimit + 1);
 
                 for(int j = 0; j < i; j++)
-                {
-                    if (tempX != coins[j].CoinXPos && tempY != coins[j].CoinYPos)
+                {      //ensures coins dont spawn on top of each other                  //ensures coins dont spawn on top of the player
+                    if ((tempX != coins[j].CoinXPos && tempY != coins[j].CoinYPos) && (tempY != player.XPos && tempY != player.YPos))
                     {
                         coins[i].CoinXPos = tempX;
                         coins[i].CoinYPos = tempY;

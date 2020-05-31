@@ -21,11 +21,17 @@ namespace WaveDodger2
         private const ConsoleColor DEFAULT_SCREENGRASS_BACKCOLOR = ConsoleColor.Green;
         private const ConsoleColor DEFAULT_BORDER_FORECOLOR = ConsoleColor.White;
         private const ConsoleColor DEFAULT_BORDER_BACKCOLOR = ConsoleColor.Black;
+        private const ConsoleColor DEFAULT_MORE_LIVES_REMAINING_COLOR = ConsoleColor.Green;
+        private const ConsoleColor DEFAULT_TWO_LIVES_REMAINING_COLOR = ConsoleColor.DarkYellow;
+        private const ConsoleColor DEFAULT_ONE_LIFE_REMAINING_COLOR = ConsoleColor.Red;
         private ConsoleColor _screengrassForeColor; //foreground color of the screen background
         private ConsoleColor _screengrassBackColor; //background color of the screen background
         private ConsoleColor _borderForeColor; //foreground color of the border
         private ConsoleColor _borderBackColor; //background color of the border
-
+        private ConsoleColor _moreLivesRemainingColor; //color of the display if lives remaining is three or more
+        private ConsoleColor _twoLivesRemainingColor; //color of the display if player has two lives remaining
+        private ConsoleColor _oneLifeRemainingColor; //color of the display if user is on their last life
+       
         private const int DEFAULT_WIDTH = 100;
         private const int DEFAULT_HEIGHT = 35;
         private const int DEFAULT_BORDER_WIDTH = 15;
@@ -47,13 +53,16 @@ namespace WaveDodger2
             ScreengrassBackColor = DEFAULT_SCREENGRASS_BACKCOLOR;
             BorderForeColor = DEFAULT_BORDER_FORECOLOR;
             BorderBackColor = DEFAULT_BORDER_BACKCOLOR;
+            MoreLivesRemainingColor = DEFAULT_MORE_LIVES_REMAINING_COLOR;
+            TwoLivesRemainingColor = DEFAULT_TWO_LIVES_REMAINING_COLOR;
+            OneLifeRemainingColor = DEFAULT_ONE_LIFE_REMAINING_COLOR;
             Width = DEFAULT_WIDTH;
             Height = DEFAULT_HEIGHT;
             BorderWidth = DEFAULT_BORDER_WIDTH;
-            SetLimits();
+            CalculateLimits();
         }
 
-        private void SetLimits()
+        private void CalculateLimits()
         {
             UpLimit = 1;
             DownLimit = Height - 2;
@@ -119,6 +128,38 @@ namespace WaveDodger2
             {
                 Write(BorderChar);
             }
+            ResetColor();
+        }
+
+        public void UpdateDisplay(Player player, Coin[] coins)
+        {
+            if (player.LivesRemaining >= Player.THREE_LIVES_REMAINING)
+                ForegroundColor = MoreLivesRemainingColor;
+
+            if (player.LivesRemaining == Player.TWO_LIVES_REMAINING)
+                ForegroundColor = TwoLivesRemainingColor;
+
+            if (player.LivesRemaining == Player.ONE_LIFE_REMAINING)
+                ForegroundColor = OneLifeRemainingColor;
+
+            int heightOffset = 3;
+            string displayRound = String.Format("Round");
+            string displayCoins = String.Format("Coins Collected: {0} / {1}", player.CoinsCollected, coins.Length);
+            string displayLives = String.Format("Lives Remaining: {0}", player.LivesRemaining);
+            int displayX = (Width + 2*BorderWidth) / 2;
+            int displayY = Height + heightOffset;
+
+            SetCursorPosition(displayX - (displayRound.Length / 2), displayY);
+            WriteLine(displayRound);
+            displayY += 2;
+
+            SetCursorPosition(displayX - (displayCoins.Length / 2), displayY);
+            WriteLine(displayCoins);
+            displayY += 2;
+
+            SetCursorPosition(displayX - (displayLives.Length / 2), displayY);
+            WriteLine(displayLives);
+
             ResetColor();
         }
         
@@ -194,6 +235,43 @@ namespace WaveDodger2
                 _borderBackColor = value;
             }
         }
+
+        public ConsoleColor MoreLivesRemainingColor
+        {
+            get
+            {
+                return _moreLivesRemainingColor;
+            }
+            set
+            {
+                _moreLivesRemainingColor = value;
+            }
+        }
+
+        public ConsoleColor TwoLivesRemainingColor
+        {
+            get
+            {
+                return _twoLivesRemainingColor;
+            }
+            set
+            {
+                _twoLivesRemainingColor = value;
+            }
+        }
+
+        public ConsoleColor OneLifeRemainingColor
+        {
+            get
+            {
+                return _oneLifeRemainingColor;
+            }
+            set
+            {
+                _oneLifeRemainingColor = value;
+            }
+        }
+
 
         public int Width
         {

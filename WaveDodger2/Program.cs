@@ -42,13 +42,13 @@ namespace WaveDodger2
 
         static void Test()
         {
-            int nCoins = 2;
+            int nCoins = 25;
             Random rnd = new Random();
             Enemy[] enemies = null;
             Player player1 = new Player();
             GameArea area = new GameArea();
-            Coin[] coins = Coin.GenerateCoinArray(nCoins, rnd, area);
-
+            Coin[] coins = Coin.GenerateCoinArray(nCoins, rnd, area, player1);
+            player1.LoseLife();player1.LoseLife();player1.LoseLife();
             area.Render();
             Coin.Render(coins);
 
@@ -57,6 +57,7 @@ namespace WaveDodger2
             while (1 < 2)
             {
                 Maximize();
+                area.UpdateDisplay(player1, coins);
                 while (KeyAvailable)
                 {
                     userKey = ReadKey(true).Key;

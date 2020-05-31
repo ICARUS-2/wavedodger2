@@ -5,6 +5,10 @@ namespace WaveDodger2
 {
     class Player
     {
+        public const int THREE_LIVES_REMAINING = 3;
+        public const int TWO_LIVES_REMAINING = 2;
+        public const int ONE_LIFE_REMAINING = 1;
+
         private const char DEFAULT_PLAYER_CHAR = 'X';
         private char _playerChar;
 
