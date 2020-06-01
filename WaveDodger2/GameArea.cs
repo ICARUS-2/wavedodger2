@@ -12,14 +12,14 @@ namespace WaveDodger2
     class GameArea
     {
 
-        private const char DEFAULT_SCREENGRASS_CHAR = '█';
+        private const char DEFAULT_SCREENGRASS_CHAR = '.';
         private const char DEFAULT_BORDER_CHAR = '█';
         private char _screengrassChar; //the character background of the level
         private char _borderChar; //the character border around the level and display
         
         private const ConsoleColor DEFAULT_SCREENGRASS_FORECOLOR = ConsoleColor.Blue;
-        private const ConsoleColor DEFAULT_SCREENGRASS_BACKCOLOR = ConsoleColor.Green;
-        private const ConsoleColor DEFAULT_BORDER_FORECOLOR = ConsoleColor.White;
+        private const ConsoleColor DEFAULT_SCREENGRASS_BACKCOLOR = ConsoleColor.Black;
+        private const ConsoleColor DEFAULT_BORDER_FORECOLOR = ConsoleColor.DarkBlue;
         private const ConsoleColor DEFAULT_BORDER_BACKCOLOR = ConsoleColor.Black;
         private const ConsoleColor DEFAULT_MORE_LIVES_REMAINING_COLOR = ConsoleColor.Green;
         private const ConsoleColor DEFAULT_TWO_LIVES_REMAINING_COLOR = ConsoleColor.DarkYellow;
@@ -32,8 +32,8 @@ namespace WaveDodger2
         private ConsoleColor _twoLivesRemainingColor; //color of the display if player has two lives remaining
         private ConsoleColor _oneLifeRemainingColor; //color of the display if user is on their last life
        
-        private const int DEFAULT_WIDTH = 100;
-        private const int DEFAULT_HEIGHT = 35;
+        private const int DEFAULT_WIDTH = 50;
+        private const int DEFAULT_HEIGHT = 30;
         private const int DEFAULT_BORDER_WIDTH = 15;
         private int _width; //width of the main play area NOT COUNTING THE BORDER SPACE
         private int _height; //height of the screen

@@ -9,7 +9,7 @@ namespace WaveDodger2
         public const int TWO_LIVES_REMAINING = 2;
         public const int ONE_LIFE_REMAINING = 1;
 
-        private const char DEFAULT_PLAYER_CHAR = 'X';
+        private const char DEFAULT_PLAYER_CHAR = '0';
         private char _playerChar;
 
         private const int DEFAULT_SPEED = 1;
@@ -25,8 +25,8 @@ namespace WaveDodger2
         private int _livesRemaining;
         private int _coinsCollected;
 
-        private const ConsoleColor DEFAULT_FORE_COLOR = ConsoleColor.Green;
-        private const ConsoleColor DEFAULT_BACK_COLOR = ConsoleColor.Magenta;
+        private const ConsoleColor DEFAULT_FORE_COLOR = ConsoleColor.DarkGreen;
+        private const ConsoleColor DEFAULT_BACK_COLOR = ConsoleColor.Black;
         private ConsoleColor _playerForeColor;
         private ConsoleColor _playerBackColor;
 
@@ -91,10 +91,13 @@ namespace WaveDodger2
         {
             if (OldXPos != XPos || OldYPos != YPos)
             {
-                SetCursorPosition(OldXPos, OldYPos);
-                ForegroundColor = area.ScreengrassForeColor;
-                BackgroundColor = area.ScreengrassBackColor;
-                WriteLine(area.ScreengrassChar);
+                if (OldXPos != 0 && OldYPos != 0)
+                {
+                    SetCursorPosition(OldXPos, OldYPos);
+                    ForegroundColor = area.ScreengrassForeColor;
+                    BackgroundColor = area.ScreengrassBackColor;
+                    WriteLine(area.ScreengrassChar);
+                }
 
                 SetCursorPosition(XPos, YPos);
                 ForegroundColor = ForeColor;
@@ -130,6 +133,7 @@ namespace WaveDodger2
         public void CheckCollision(Enemy[] enemies, Coin[] coins)
         {
             CheckCoinCollision(coins);
+            CheckEnemyCollision(enemies);
             //if players position is equal to the position of an enemy return true
         }
         #endregion
@@ -144,7 +148,7 @@ namespace WaveDodger2
             ResetColor();
         }
 
-        private void CheckEnemyCollision()
+        private void CheckEnemyCollision(Enemy[] enemies)
         {
 
         }

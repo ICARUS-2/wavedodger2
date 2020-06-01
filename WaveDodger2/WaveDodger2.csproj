@@ -46,6 +46,7 @@
     <Compile Include="Coin.cs" />
     <Compile Include="Enemy.cs" />
     <Compile Include="GameArea.cs" />
+    <Compile Include="Level.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -42,30 +42,44 @@ namespace WaveDodger2
 
         static void Test()
         {
-            int nCoins = 25;
+            int numberOfCoins = 1;
+            int numberOfEnemies = 2;
+            int difficultyCounter = 0;
+            int difficulty = 100;
+            int testLoopCounter = 0;
             Random rnd = new Random();
-            Enemy[] enemies = null;
             Player player1 = new Player();
             GameArea area = new GameArea();
-            Coin[] coins = Coin.GenerateCoinArray(nCoins, rnd, area, player1);
+            Enemy[] enemies = Enemy.GetArrayOfEnemies(numberOfEnemies, area);
+            Coin[] coins = Coin.GenerateCoinArray(numberOfCoins, rnd, area, player1);
             area.Render();
             Coin.Render(coins);
-
+            Enemy.ChangeSide(enemies, area, rnd);
+            Enemy.RenderInitial(enemies);
             ConsoleKey userKey;
             player1.InitializePosition(area);
             while (1 < 2)
             {
+                testLoopCounter++;
+                difficultyCounter++;
                 Maximize();
                 area.UpdateDisplay(player1, coins);
                 while (KeyAvailable)
                 {
                     userKey = ReadKey(true).Key;
                     player1.Move(userKey, area);
-                    player1.Draw(area);
-                    player1.CheckCollision(enemies, coins);
                 }//end of inner while
+                player1.Draw(area);
+                player1.CheckCollision(enemies, coins);
 
-                if (player1.CoinsCollected == nCoins)
+                if (difficultyCounter == difficulty)
+                {
+                    Enemy.MoveEnemies(enemies, area, rnd);
+                    Enemy.Render(enemies, area, coins, rnd);
+                    difficultyCounter = 0;
+                }
+
+                if (player1.CoinsCollected == numberOfCoins)
                     Environment.Exit(0);
             }//end of outer while
         }//end of method
