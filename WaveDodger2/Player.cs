@@ -9,11 +9,11 @@ namespace WaveDodger2
         public const int TWO_LIVES_REMAINING = 2;
         public const int ONE_LIFE_REMAINING = 1;
 
-        private const char DEFAULT_PLAYER_CHAR = '0';
+        public const char DEFAULT_PLAYER_CHAR = '0';
         private char _playerChar;
 
         private const int DEFAULT_SPEED = 1;
-        private const int DEFAULT_STARTING_LIVES = 3;
+        public const int DEFAULT_STARTING_LIVES = 3;
         private const int DEFAULT_X_POS = 2;
         private const int DEFAULT_Y_POS = 2;
         private int _speed;
@@ -25,15 +25,15 @@ namespace WaveDodger2
         private int _livesRemaining;
         private int _coinsCollected;
 
-        private const ConsoleColor DEFAULT_FORE_COLOR = ConsoleColor.DarkGreen;
-        private const ConsoleColor DEFAULT_BACK_COLOR = ConsoleColor.Black;
+        public const ConsoleColor DEFAULT_FORE_COLOR = ConsoleColor.Green;
+        public const ConsoleColor DEFAULT_BACK_COLOR = ConsoleColor.Magenta;
         private ConsoleColor _playerForeColor;
         private ConsoleColor _playerBackColor;
 
-        private const ConsoleKey DEFAULT_KEY_UP = ConsoleKey.W;
-        private const ConsoleKey DEFAULT_KEY_DOWN = ConsoleKey.S;
-        private const ConsoleKey DEFAULT_KEY_LEFT = ConsoleKey.A;
-        private const ConsoleKey DEFAULT_KEY_RIGHT = ConsoleKey.D;
+        public const ConsoleKey DEFAULT_KEY_UP = ConsoleKey.W;
+        public const ConsoleKey DEFAULT_KEY_DOWN = ConsoleKey.S;
+        public const ConsoleKey DEFAULT_KEY_LEFT = ConsoleKey.A;
+        public const ConsoleKey DEFAULT_KEY_RIGHT = ConsoleKey.D;
         private ConsoleKey _keyUp;
         private ConsoleKey _keyDown;
         private ConsoleKey _keyLeft;
@@ -50,6 +50,23 @@ namespace WaveDodger2
             CoinsCollected = 0;
             ForeColor = DEFAULT_FORE_COLOR;
             BackColor = DEFAULT_BACK_COLOR;
+            KeyUp = DEFAULT_KEY_UP;
+            KeyDown = DEFAULT_KEY_DOWN;
+            KeyLeft = DEFAULT_KEY_LEFT;
+            KeyRight = DEFAULT_KEY_RIGHT;
+        }
+
+        public Player(char playerChar_, int startingLives_, ConsoleColor playerForeColor_, ConsoleColor playerBackColor_) //advanced editor
+        {
+            PlayerChar = playerChar_;
+            Speed = DEFAULT_SPEED;
+            XPos = DEFAULT_X_POS;
+            YPos = DEFAULT_Y_POS;
+            StartingLives = startingLives_;
+            LivesRemaining = StartingLives;
+            CoinsCollected = 0;
+            ForeColor = playerForeColor_;
+            BackColor = playerBackColor_;
             KeyUp = DEFAULT_KEY_UP;
             KeyDown = DEFAULT_KEY_DOWN;
             KeyLeft = DEFAULT_KEY_LEFT;
@@ -139,13 +156,16 @@ namespace WaveDodger2
             CoinsCollected = 0;
         }
 
-        public void HitTest(Enemy[] enemies, ref bool cycleCollision)
+        public void HitTest(Enemy[] enemies, Player player, ref bool cycleCollision)
         {
-            cycleCollision = CheckEnemyCollision(enemies);
-            DrawDirectly();
-            
-            if (cycleCollision)
-                LoseLife();
+            if (player.LivesRemaining > 0)
+            {
+                cycleCollision = CheckEnemyCollision(enemies);
+                DrawDirectly();
+
+                if (cycleCollision)
+                    LoseLife();
+            }
         }
 
         public bool CheckEnemyCollision(Enemy[] enemies)

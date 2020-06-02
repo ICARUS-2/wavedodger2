@@ -20,7 +20,8 @@ namespace WaveDodger2
             {
                 Maximize();
                 CursorVisible = false;
-                Test();
+                //MainGameTesting();
+                LevelGeneratorTesting();
             }
             catch (Exception ex)
             {
@@ -46,7 +47,7 @@ namespace WaveDodger2
             ReadKey();
         }
 
-        static void Test()
+        static void MainGameTesting()
         {
             int numberOfCoins = 1;
             int numberOfEnemies = 50;
@@ -74,7 +75,7 @@ namespace WaveDodger2
                 area.UpdateDisplay(player1, coins);
                 while (KeyAvailable)
                 {
-                    player1.HitTest(enemies, ref cycleCollision);
+                    player1.HitTest(enemies, player1, ref cycleCollision);
                     userKey = ReadKey(true).Key;
                     player1.Move(userKey, area);
                     player1.Draw(area);
@@ -82,7 +83,7 @@ namespace WaveDodger2
                 player1.CheckCoinCollision(coins);
                 if (difficultyCounter == difficulty)
                 {
-                    player1.HitTest(enemies, ref cycleCollision);
+                    player1.HitTest(enemies, player1, ref cycleCollision);
                     Enemy.MoveEnemies(enemies, area, rnd);
                     Enemy.Render(enemies, player1, area, coins, rnd);
                     difficultyCounter = 0;
@@ -91,5 +92,54 @@ namespace WaveDodger2
                     Environment.Exit(0);
             }//end of outer while
         }//end of method
+
+        static void LevelGeneratorTesting()
+        {
+            Level[] levels = Level.GenerateLevels();
+            NewGame(levels[1]);
+        }
+
+        static void PrepareLevel(Level current)
+        {
+            current.Area.Render();
+            Coin.Render(current.Coins);
+            Enemy.ChangeSide(current.Enemies, current.Area, current.Rnd);
+            Enemy.RenderInitial(current.Enemies);
+            current.Player1.InitializePosition(current.Area);
+        }
+
+        static void NewGame(Level current)
+        {
+            int currentLevel = 3;
+            bool cycleCollision;
+            int difficultyCounter = 0;
+            ConsoleKey userKey;
+
+            PrepareLevel(current);
+            while (current.Player1.LivesRemaining != 0)
+            {
+                cycleCollision = false;
+                difficultyCounter++;
+                Maximize();
+                current.Area.UpdateDisplay(current.Player1, current.Coins);
+                while (KeyAvailable)
+                {
+                    current.Player1.HitTest(current.Enemies, current.Player1, ref cycleCollision);
+                    userKey = ReadKey(true).Key;
+                    current.Player1.Move(userKey, current.Area);
+                    current.Player1.Draw(current.Area);
+                }//end of inner while
+                current.Player1.CheckCoinCollision(current.Coins);
+                if (difficultyCounter == current.Difficulty)
+                {
+                    current.Player1.HitTest(current.Enemies, current.Player1, ref cycleCollision);
+                    Enemy.MoveEnemies(current.Enemies, current.Area, current.Rnd);
+                    Enemy.Render(current.Enemies, current.Player1, current.Area, current.Coins, current.Rnd);
+                    difficultyCounter = 0;
+                }
+                if (current.Player1.CoinsCollected == current.Coins.Length)
+                    Environment.Exit(0);
+            }
+        }
     }//end of class
 }//end of namespace

@@ -11,11 +11,11 @@ namespace WaveDodger2
         private const Sides DEFAULT_EMERGING_SIDE = Sides.Top;
         private Sides _emergingSide;
 
-        private const char DEFAULT_ENEMY_CHAR = 'X';
+        public const char DEFAULT_ENEMY_CHAR = 'X';
         private char _enemyChar;
 
-        private const ConsoleColor DEFAULT_ENEMY_FORECOLOR = ConsoleColor.DarkRed;
-        private const ConsoleColor DEFAULT_ENEMY_BACKCOLOR = ConsoleColor.Black;
+        public const ConsoleColor DEFAULT_ENEMY_FORECOLOR = ConsoleColor.DarkRed;
+        public const ConsoleColor DEFAULT_ENEMY_BACKCOLOR = ConsoleColor.Black;
         private ConsoleColor _enemyForeColor;
         private ConsoleColor _enemyBackChar;
         public enum Sides
@@ -26,7 +26,7 @@ namespace WaveDodger2
             Left = 4,
         }
 
-        public Enemy()
+        public Enemy() //default
         {
             EnemyXPos = 0;
             EnemyYPos = 0;
@@ -34,6 +34,16 @@ namespace WaveDodger2
             EnemyChar = DEFAULT_ENEMY_CHAR;
             EnemyForeColor = DEFAULT_ENEMY_FORECOLOR;
             EnemyBackColor = DEFAULT_ENEMY_BACKCOLOR;
+        }
+
+        public Enemy(char enemyChar_, ConsoleColor enemyForeColor_, ConsoleColor enemyBackColor_) //advanced editor
+        {
+            EnemyXPos = 0;
+            EnemyYPos = 0;
+            EmergingSide = DEFAULT_EMERGING_SIDE;
+            EnemyChar = enemyChar_;
+            EnemyForeColor = enemyForeColor_;
+            EnemyBackColor = enemyBackColor_;
         }
 
         #region//EXTERNAL METHODS
@@ -44,6 +54,18 @@ namespace WaveDodger2
             for (int i = 0; i < enemies.Length; i++)
             {
                 enemies[i] = new Enemy();
+            }
+
+            return enemies;
+        }
+
+        public static Enemy[] GetArrayOfEnemies(int numberOfEnemies, GameArea area, char enemyChar_, ConsoleColor enemyForeColor_, ConsoleColor enemyBackColor_)
+        {
+            Enemy[] enemies = new Enemy[numberOfEnemies];
+
+            for (int i = 0; i < enemies.Length; i++)
+            {
+                enemies[i] = new Enemy(enemyChar_, enemyForeColor_, enemyBackColor_);
             }
 
             return enemies;

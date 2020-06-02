@@ -11,19 +11,18 @@ namespace WaveDodger2
 {
     class GameArea
     {
-        //consts labeled as DEFAULT are used in the default constructor
-        private const char DEFAULT_SCREENGRASS_CHAR = '.';
-        private const char DEFAULT_BORDER_CHAR = '█';
+        public const char DEFAULT_SCREENGRASS_CHAR = '.';
+        public const char DEFAULT_BORDER_CHAR = '█';
         private char _screengrassChar; //the character background of the level
-        private char _borderChar; //the character border around the level and display
+        private char _borderChar; //the character border around the level
         
-        private const ConsoleColor DEFAULT_SCREENGRASS_FORECOLOR = ConsoleColor.Blue;
-        private const ConsoleColor DEFAULT_SCREENGRASS_BACKCOLOR = ConsoleColor.Black;
-        private const ConsoleColor DEFAULT_BORDER_FORECOLOR = ConsoleColor.DarkBlue;
-        private const ConsoleColor DEFAULT_BORDER_BACKCOLOR = ConsoleColor.Black;
-        private const ConsoleColor DEFAULT_MORE_LIVES_REMAINING_COLOR = ConsoleColor.Green;
-        private const ConsoleColor DEFAULT_TWO_LIVES_REMAINING_COLOR = ConsoleColor.DarkYellow;
-        private const ConsoleColor DEFAULT_ONE_LIFE_REMAINING_COLOR = ConsoleColor.Red;
+        public const ConsoleColor DEFAULT_SCREENGRASS_FORECOLOR = ConsoleColor.White;
+        public const ConsoleColor DEFAULT_SCREENGRASS_BACKCOLOR = ConsoleColor.Black;
+        public const ConsoleColor DEFAULT_BORDER_FORECOLOR = ConsoleColor.White;
+        public const ConsoleColor DEFAULT_BORDER_BACKCOLOR = ConsoleColor.Black;
+        public const ConsoleColor DEFAULT_MORE_LIVES_REMAINING_COLOR = ConsoleColor.Green;
+        public const ConsoleColor DEFAULT_TWO_LIVES_REMAINING_COLOR = ConsoleColor.DarkYellow;
+        public const ConsoleColor DEFAULT_ONE_LIFE_REMAINING_COLOR = ConsoleColor.Red;
         private ConsoleColor _screengrassForeColor; //foreground color of the screen background
         private ConsoleColor _screengrassBackColor; //background color of the screen background
         private ConsoleColor _borderForeColor; //foreground color of the border
@@ -32,9 +31,9 @@ namespace WaveDodger2
         private ConsoleColor _twoLivesRemainingColor; //color of the display if player has two lives remaining
         private ConsoleColor _oneLifeRemainingColor; //color of the display if user is on their last life
        
-        private const int DEFAULT_WIDTH = 50;
-        private const int DEFAULT_HEIGHT = 30;
-        private const int DEFAULT_BORDER_WIDTH = 15;
+        public const int DEFAULT_WIDTH = 50;
+        public const int DEFAULT_HEIGHT = 30;
+        public const int DEFAULT_BORDER_WIDTH = 15;
         private int _width; //width of the main play area NOT COUNTING THE BORDER SPACE
         private int _height; //height of the screen
         private int _borderWidth; //width of the blank areas flanking both sides of the level
@@ -45,7 +44,7 @@ namespace WaveDodger2
         private int _rightLimit; //highest possible x coord the player can hit
 
 
-        public GameArea()
+        public GameArea() //default settings
         {
             ScreengrassChar = DEFAULT_SCREENGRASS_CHAR;
             BorderChar = DEFAULT_BORDER_CHAR;
@@ -53,12 +52,45 @@ namespace WaveDodger2
             ScreengrassBackColor = DEFAULT_SCREENGRASS_BACKCOLOR;
             BorderForeColor = DEFAULT_BORDER_FORECOLOR;
             BorderBackColor = DEFAULT_BORDER_BACKCOLOR;
-            MoreLivesRemainingColor = DEFAULT_MORE_LIVES_REMAINING_COLOR;
-            TwoLivesRemainingColor = DEFAULT_TWO_LIVES_REMAINING_COLOR;
-            OneLifeRemainingColor = DEFAULT_ONE_LIFE_REMAINING_COLOR;
             Width = DEFAULT_WIDTH;
             Height = DEFAULT_HEIGHT;
             BorderWidth = DEFAULT_BORDER_WIDTH;
+            MoreLivesRemainingColor = DEFAULT_MORE_LIVES_REMAINING_COLOR;
+            TwoLivesRemainingColor = DEFAULT_TWO_LIVES_REMAINING_COLOR;
+            OneLifeRemainingColor = DEFAULT_ONE_LIFE_REMAINING_COLOR;
+            CalculateLimits();
+        }
+
+        public GameArea(int width_, int height_) //simple editor
+        {
+            ScreengrassChar = DEFAULT_SCREENGRASS_CHAR;
+            BorderChar = DEFAULT_BORDER_CHAR;
+            ScreengrassForeColor = DEFAULT_SCREENGRASS_FORECOLOR;
+            ScreengrassBackColor = DEFAULT_SCREENGRASS_BACKCOLOR;
+            BorderForeColor = DEFAULT_BORDER_FORECOLOR;
+            BorderBackColor = DEFAULT_BORDER_BACKCOLOR;
+            Width = width_; //only thing that can be changed is the width and height in the simple editor
+            Height = height_;
+            BorderWidth = DEFAULT_BORDER_WIDTH;
+            MoreLivesRemainingColor = DEFAULT_MORE_LIVES_REMAINING_COLOR;
+            TwoLivesRemainingColor = DEFAULT_TWO_LIVES_REMAINING_COLOR;
+            OneLifeRemainingColor = DEFAULT_ONE_LIFE_REMAINING_COLOR;
+        }
+        
+        public GameArea(char screengrassChar_, char borderChar_, ConsoleColor screengrassForeColor_, ConsoleColor screengrassBackColor_, ConsoleColor borderForeColor_, ConsoleColor borderBackColor_, int width_, int height_, int borderWidth_) //advanced editor
+        {
+            ScreengrassChar = screengrassChar_;
+            BorderChar = borderChar_;
+            ScreengrassForeColor = screengrassForeColor_;
+            ScreengrassBackColor = screengrassBackColor_;
+            BorderForeColor = borderForeColor_;
+            BorderBackColor = borderBackColor_;
+            Width = width_;
+            Height = height_;
+            BorderWidth = borderWidth_;
+            MoreLivesRemainingColor = DEFAULT_MORE_LIVES_REMAINING_COLOR;
+            TwoLivesRemainingColor = DEFAULT_TWO_LIVES_REMAINING_COLOR;
+            OneLifeRemainingColor = DEFAULT_ONE_LIFE_REMAINING_COLOR;
             CalculateLimits();
         }
 
