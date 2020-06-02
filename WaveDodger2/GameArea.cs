@@ -11,7 +11,7 @@ namespace WaveDodger2
 {
     class GameArea
     {
-
+        //consts labeled as DEFAULT are used in the default constructor
         private const char DEFAULT_SCREENGRASS_CHAR = '.';
         private const char DEFAULT_BORDER_CHAR = '█';
         private char _screengrassChar; //the character background of the level

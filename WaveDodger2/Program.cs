@@ -43,7 +43,7 @@ namespace WaveDodger2
         static void Test()
         {
             int numberOfCoins = 1;
-            int numberOfEnemies = 2;
+            int numberOfEnemies = 35;
             int difficultyCounter = 0;
             int difficulty = 100;
             int testLoopCounter = 0;
@@ -68,17 +68,16 @@ namespace WaveDodger2
                 {
                     userKey = ReadKey(true).Key;
                     player1.Move(userKey, area);
+                    player1.Draw(area);
                 }//end of inner while
-                player1.Draw(area);
                 player1.CheckCollision(enemies, coins);
 
                 if (difficultyCounter == difficulty)
                 {
                     Enemy.MoveEnemies(enemies, area, rnd);
-                    Enemy.Render(enemies, area, coins, rnd);
+                    Enemy.Render(enemies, player1, area, coins, rnd);
                     difficultyCounter = 0;
                 }
-
                 if (player1.CoinsCollected == numberOfCoins)
                     Environment.Exit(0);
             }//end of outer while

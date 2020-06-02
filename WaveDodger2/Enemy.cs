@@ -52,8 +52,8 @@ namespace WaveDodger2
         public static void ChangeSide(Enemy[] enemies, GameArea area, Random rnd)
         {
             //Random rnd = new Random();
-            //enemies[0].EmergingSide = (Sides)rnd.Next((int)Sides.Top, (int)Sides.Left + 1); //Generates a number from 1-4 representing the side the enemies will scroll across the screen from
-            enemies[0].EmergingSide = Sides.Left;
+            enemies[0].EmergingSide = (Sides)rnd.Next((int)Sides.Top, (int)Sides.Left + 1); //Generates a number from 1-4 representing the side the enemies will scroll across the screen from
+            //enemies[0].EmergingSide = Sides.Left;
             for (int i = 0; i < enemies.Length; i++)
             {
                 switch (enemies[0].EmergingSide)
@@ -81,7 +81,44 @@ namespace WaveDodger2
             }
         }
 
-        public static void Render(Enemy[] enemies, GameArea area, Coin[] coins, Random rnd)
+
+
+        public static void MoveEnemies(Enemy[] enemies, GameArea area, Random rnd)
+        {
+            if (CheckIfAtEnd(enemies, area))
+            {
+                DeleteWaveAtEnd(enemies, area);
+                ChangeSide(enemies, area, rnd);
+                
+            }
+            else
+            {
+                for (int i = 0; i < enemies.Length; i++)
+                {
+                    switch (enemies[0].EmergingSide)
+                    {
+                        case Sides.Top:
+                            enemies[i].EnemyYPos++;
+                            break;
+
+                        case Sides.Right:
+                            enemies[i].EnemyXPos--;
+                            break;
+
+                        case Sides.Bottom:
+                            enemies[i].EnemyYPos--;
+                            break;
+
+                        case Sides.Left:
+                            enemies[i].EnemyXPos++;
+                            break;
+
+                    }//end of switch
+                }//end of loop
+            }
+        }//end of method
+
+        public static void Render(Enemy[] enemies, Player player, GameArea area, Coin[] coins, Random rnd)
         {
             for (int i = 0; i < enemies.Length; i++)
             {
@@ -143,14 +180,14 @@ namespace WaveDodger2
                 SetCursorPosition(e.EnemyXPos, e.EnemyYPos);
                 WriteLine(e.EnemyChar);
             }
-
+            player.Draw(area);
 
             ResetColor();
         }
 
         public static void RenderInitial(Enemy[] enemies)
         {
-            foreach(Enemy e in enemies)
+            foreach (Enemy e in enemies)
             {
                 ForegroundColor = e.EnemyForeColor;
                 BackgroundColor = e.EnemyBackColor;
@@ -159,9 +196,12 @@ namespace WaveDodger2
             }
             ResetColor();
         }
+        #endregion
 
-        public static void MoveEnemies(Enemy[] enemies, GameArea area, Random rnd)
+        #region//INTERNAL METHODS
+        private static bool CheckIfAtEnd(Enemy[] enemies, GameArea area)
         {
+            int checksum = 0;
             for (int i = 0; i < enemies.Length; i++)
             {
                 switch (enemies[0].EmergingSide)
@@ -169,53 +209,48 @@ namespace WaveDodger2
                     case Sides.Top:
                         if (enemies[i].EnemyYPos == area.Height - 2)
                         {
-                            ChangeSide(enemies, area, rnd);
-                        }
-                        else
-                        {
-                            enemies[i].EnemyYPos++;
+                            checksum++;
                         }
                         break;
 
                     case Sides.Right:
                         if (enemies[i].EnemyXPos == area.BorderWidth)
                         {
-                            ChangeSide(enemies, area, rnd);
-                        }
-                        else
-                        {
-                            enemies[i].EnemyXPos--;
+                            checksum++;
                         }
                         break;
 
                     case Sides.Bottom:
                         if (enemies[i].EnemyYPos == 1)
                         {
-                            ChangeSide(enemies, area, rnd);
-                        }
-                        else
-                        {
-                            enemies[i].EnemyYPos--;
+                            checksum++;
                         }
                         break;
 
                     case Sides.Left:
                         if (enemies[i].EnemyXPos == area.Width + area.BorderWidth - 1)
                         {
-                            ChangeSide(enemies, area, rnd);
-                        }
-                        else
-                        {
-                            enemies[i].EnemyXPos++;
+                            checksum++;
                         }
                         break;
-                }//end of switch
-            }//end of loop
-        }//end of method
-        #endregion
+                }
+            }
+            if (checksum == enemies.Length)
+                return true;
 
-        #region//INTERNAL METHODS
+            return false;
+        }
 
+        private static void DeleteWaveAtEnd(Enemy[] enemies, GameArea area)
+        {
+            foreach(Enemy e in enemies)
+            {
+                SetCursorPosition(e.EnemyXPos, e.EnemyYPos);
+                ForegroundColor = area.ScreengrassForeColor;
+                BackgroundColor = area.ScreengrassBackColor;
+                WriteLine(area.ScreengrassChar);
+            }
+        }
         #endregion
         #region//PROPERTIES
         public int EnemyXPos
