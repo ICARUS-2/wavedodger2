@@ -59,7 +59,7 @@ namespace WaveDodger2
                 switch (enemies[0].EmergingSide)
                 {
                     case Sides.Top: 
-                        enemies[i].EnemyXPos = rnd.Next(area.BorderWidth + 1, area.Width + area.BorderWidth);
+                        enemies[i].EnemyXPos = rnd.Next(area.BorderWidth, area.Width + area.BorderWidth);
                         enemies[i].EnemyYPos = 1;
                         break;
 
@@ -69,7 +69,7 @@ namespace WaveDodger2
                         break;
 
                     case Sides.Bottom:
-                        enemies[i].EnemyXPos = rnd.Next(area.BorderWidth + 1, area.Width + area.BorderWidth);
+                        enemies[i].EnemyXPos = rnd.Next(area.BorderWidth, area.Width + area.BorderWidth);
                         enemies[i].EnemyYPos = area.Height - 2;
                         break;
 
@@ -88,8 +88,7 @@ namespace WaveDodger2
             if (CheckIfAtEnd(enemies, area))
             {
                 DeleteWaveAtEnd(enemies, area);
-                ChangeSide(enemies, area, rnd);
-                
+                ChangeSide(enemies, area, rnd);          
             }
             else
             {

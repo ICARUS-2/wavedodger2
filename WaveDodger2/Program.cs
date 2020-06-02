@@ -24,13 +24,7 @@ namespace WaveDodger2
             }
             catch (Exception ex)
             {
-                Clear();
-                SetCursorPosition(0,0);
-                ForegroundColor = ConsoleColor.DarkRed;
-                Write("ERROR: EXCEPTION THROWN");
-                Write(ex.StackTrace);
-                WriteLine("\n\nDETAILS: {0}", ex.Message);
-                ReadKey();
+                DisplayCrashInfo(ex);
             }
         }
         private static void Maximize()
@@ -40,13 +34,26 @@ namespace WaveDodger2
             ShowWindow(p.MainWindowHandle, 3); //SW_MAXIMIZE = 3
         }
 
+        static void DisplayCrashInfo(Exception ex)
+        {
+            ResetColor();
+            Clear();
+            SetCursorPosition(0, 0);
+            ForegroundColor = ConsoleColor.DarkRed;
+            Write("ERROR: EXCEPTION THROWN");
+            Write(ex.StackTrace);
+            WriteLine("\n\nDETAILS: {0}", ex.Message);
+            ReadKey();
+        }
+
         static void Test()
         {
             int numberOfCoins = 1;
-            int numberOfEnemies = 35;
+            int numberOfEnemies = 50;
             int difficultyCounter = 0;
             int difficulty = 100;
             int testLoopCounter = 0;
+            bool cycleCollision = false;
             Random rnd = new Random();
             Player player1 = new Player();
             GameArea area = new GameArea();
@@ -58,22 +65,24 @@ namespace WaveDodger2
             Enemy.RenderInitial(enemies);
             ConsoleKey userKey;
             player1.InitializePosition(area);
-            while (1 < 2)
+            while (player1.LivesRemaining > 0)
             {
+                cycleCollision = false;
                 testLoopCounter++;
                 difficultyCounter++;
                 Maximize();
                 area.UpdateDisplay(player1, coins);
                 while (KeyAvailable)
                 {
+                    player1.HitTest(enemies, ref cycleCollision);
                     userKey = ReadKey(true).Key;
                     player1.Move(userKey, area);
                     player1.Draw(area);
                 }//end of inner while
-                player1.CheckCollision(enemies, coins);
-
+                player1.CheckCoinCollision(coins);
                 if (difficultyCounter == difficulty)
                 {
+                    player1.HitTest(enemies, ref cycleCollision);
                     Enemy.MoveEnemies(enemies, area, rnd);
                     Enemy.Render(enemies, player1, area, coins, rnd);
                     difficultyCounter = 0;

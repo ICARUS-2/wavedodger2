@@ -107,6 +107,15 @@ namespace WaveDodger2
             }
         }
 
+        public void DrawDirectly()
+        {
+            ForegroundColor = ForeColor;
+            BackgroundColor = BackColor;
+            SetCursorPosition(XPos, YPos);
+            WriteLine(PlayerChar);
+            ResetColor();
+        }
+
         public void InitializePosition(GameArea area)
         {
             XPos = (area.BorderWidth * 2 + area.Width) / 2;
@@ -130,12 +139,37 @@ namespace WaveDodger2
             CoinsCollected = 0;
         }
 
-        public void CheckCollision(Enemy[] enemies, Coin[] coins)
+        public void HitTest(Enemy[] enemies, ref bool cycleCollision)
         {
-            CheckCoinCollision(coins);
-            CheckEnemyCollision(enemies);
-            //if players position is equal to the position of an enemy return true
+            cycleCollision = CheckEnemyCollision(enemies);
+            DrawDirectly();
+            
+            if (cycleCollision)
+                LoseLife();
         }
+
+        public bool CheckEnemyCollision(Enemy[] enemies)
+        {
+            foreach (Enemy e in enemies)
+            {
+                if ((XPos == e.EnemyXPos && YPos == e.EnemyYPos))
+                {
+                    Beep();
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public void CheckCoinCollision(Coin[] coins)
+        {
+            for (int i = 0; i < coins.Length; i++)
+            {
+                if ((XPos == coins[i].CoinXPos) && (YPos == coins[i].CoinYPos) && (!coins[i].Collected))
+                    coins[i].Collect(this);
+            }
+        }
+
         #endregion
 
         #region//INTERNAL METHODS
@@ -148,19 +182,6 @@ namespace WaveDodger2
             ResetColor();
         }
 
-        private void CheckEnemyCollision(Enemy[] enemies)
-        {
-
-        }
-
-        private void CheckCoinCollision(Coin[] coins)
-        {
-            for (int i = 0; i < coins.Length; i++)
-            {
-                if ((XPos == coins[i].CoinXPos) && (YPos == coins[i].CoinYPos) && (!coins[i].Collected))
-                    coins[i].Collect(this);
-            }
-        }
         #endregion
 
         #region//PROPERTIES
