@@ -135,6 +135,14 @@ namespace WaveDodger2
                 coins[i].WriteOnScreen();
             }
         }
+
+        public static void Reset(Coin[] coins)
+        {
+            foreach (Coin c in coins)
+            {
+                c.Collected = false;
+            }
+        }
         #endregion
 
         #region//PROPERTIES

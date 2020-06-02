@@ -146,13 +146,9 @@ namespace WaveDodger2
             LivesRemaining--;
         }
 
-        public void ResetLives()
+        public void ResetStats()
         {
             LivesRemaining = StartingLives;
-        }
-
-        public void ResetPlayerCoinCount()
-        {
             CoinsCollected = 0;
         }
 

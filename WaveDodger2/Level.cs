@@ -12,7 +12,7 @@ namespace WaveDodger2
         private const int DEFAULT_NUMBER_OF_COINS = 5;
         private const int DEFAULT_NUMBER_OF_ENEMIES = 20;
         private const int DEFAULT_DIFFICULTY = 250;
-        private SoundPlayer music;
+        private SoundPlayer music; //l1: l2:Ddu Du Ddu Du 8-bit  l3: Black Swan 8-bit l4 l5:Godzilla 8 bit
         private Random _rnd;
         private Player _player1;
         private GameArea _area;

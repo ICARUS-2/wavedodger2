@@ -163,7 +163,7 @@ namespace WaveDodger2
             ResetColor();
         }
 
-        public void UpdateDisplay(Player player, Coin[] coins)
+        public void UpdateDisplay(int currentLevelIndex, Player player, Coin[] coins)
         {
             if (player.LivesRemaining >= Player.THREE_LIVES_REMAINING)
                 ForegroundColor = MoreLivesRemainingColor;
@@ -175,7 +175,8 @@ namespace WaveDodger2
                 ForegroundColor = OneLifeRemainingColor;
 
             int heightOffset = 3;
-            string displayRound = String.Format("Round");
+            int space = 2;
+            string displayRound = String.Format("Round {0}", currentLevelIndex + 1);
             string displayCoins = String.Format("Coins Collected: {0} / {1}", player.CoinsCollected, coins.Length);
             string displayLives = String.Format("Lives Remaining: {0}", player.LivesRemaining);
             int displayX = (Width + 2*BorderWidth) / 2;
@@ -183,11 +184,11 @@ namespace WaveDodger2
 
             SetCursorPosition(displayX - (displayRound.Length / 2), displayY);
             WriteLine(displayRound);
-            displayY += 2;
+            displayY += space;
 
             SetCursorPosition(displayX - (displayCoins.Length / 2), displayY);
             WriteLine(displayCoins);
-            displayY += 2;
+            displayY += space;
 
             SetCursorPosition(displayX - (displayLives.Length / 2), displayY);
             WriteLine(displayLives);
