@@ -256,10 +256,7 @@ namespace WaveDodger2
                         break;
                 }
             }
-            if (checksum == enemies.Length)
-                return true;
-
-            return false;
+            return (checksum == enemies.Length);
         }
 
         private static void DeleteWaveAtEnd(Enemy[] enemies, GameArea area)

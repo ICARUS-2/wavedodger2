@@ -24,7 +24,7 @@ namespace WaveDodger2
                 Level[] levels = Level.GenerateLevels();
                 CursorVisible = false;
                 Maximize();
-                while(!exitGame)
+                while (!exitGame)
                 {
                     TitleScreen(ref currentLevelIndex, ref gameInProgress);
                     while (gameInProgress)
@@ -48,19 +48,92 @@ namespace WaveDodger2
 
         static void TitleScreen(ref int currentLevelIndex, ref bool gameInProgress)
         {
+            int titleY = 25;
+            int menuX = 85;
+            int menuY = 40;
+            int space = 2;
+            int changeColorValue = 1000;
+            int changeColorCounter = changeColorValue - 1;
+            int rgbCycleCounter = 1;
             bool validKey = false;
             ConsoleKey userKey = ConsoleKey.NoName;
-            WriteLine("Press 1 to start new game");
-            WriteLine("Press 2 to start current round: {0}", currentLevelIndex + 1);
-            WriteLine("Press 3 to exit game");
 
             while (!validKey)
             {
+                changeColorCounter++;
+                SetCursorPosition(0, titleY);
+                CursorVisible = false;
+                switch (rgbCycleCounter) //switch statement controls the RGB
+                {
+                    case 1:
+                        ForegroundColor = ConsoleColor.DarkRed;
+                        break;
+                    case 2:
+                        ForegroundColor = ConsoleColor.Red;
+                        break;
+                    case 3:
+                        ForegroundColor = ConsoleColor.DarkYellow;
+                        break;
+                    case 4:
+                        ForegroundColor = ConsoleColor.Green;
+                        break;
+                    case 5:
+                        ForegroundColor = ConsoleColor.Cyan;
+                        break;
+                    case 6:
+                        ForegroundColor = ConsoleColor.DarkCyan;
+                        break;
+                    case 7:
+                        ForegroundColor = ConsoleColor.DarkBlue;
+                        break;
+                    case 8:
+                        ForegroundColor = ConsoleColor.DarkMagenta;
+                        break;
+                    case 9:
+                        ForegroundColor = ConsoleColor.Magenta;
+                        rgbCycleCounter = 0;
+                        break;
+                }
+                if (changeColorCounter == changeColorValue)
+                {
+                    WriteLine("                                   ___       __   ________  ___      ___ _______   ________  ________  ________  ________  _______   ________          ___  ___    ");
+                    WriteLine("                                  |\\  \\     |\\  \\|\\   __  \\|\\  \\    /  /|\\  ___ \\ |\\   ___ \\|\\   __  \\|\\   ___ \\|\\   ____\\|\\  ___ \\ |\\   __  \\        |\\  \\|\\  \\ ");
+                    WriteLine("                                  \\ \\  \\    \\ \\  \\ \\  \\|\\  \\ \\  \\  /  / | \\   __/|\\ \\  \\_|\\ \\ \\  \\|\\  \\ \\  \\_|\\ \\ \\  \\___|\\ \\   __/|\\ \\  \\|\\  \\       \\ \\  \\ \\  \\ ");
+                    WriteLine("                                   \\ \\  \\  __\\ \\  \\ \\   __  \\ \\  \\/  / / \\ \\  \\_|/_\\ \\  \\ \\\\ \\ \\  \\\\\\  \\ \\  \\ \\\\ \\ \\  \\  __\\ \\  \\_|/_\\ \\   _  _\\       \\ \\  \\ \\  \\");
+                    WriteLine("                                    \\ \\  \\|\\__\\_\\  \\ \\  \\ \\  \\ \\    / /   \\ \\  \\_|\\ \\ \\  \\_\\\\ \\ \\  \\\\\\  \\ \\  \\_\\\\ \\ \\  \\|\\  \\ \\  \\_|\\ \\ \\  \\\\  \\|       \\ \\  \\ \\  \\");
+                    WriteLine("                                     \\ \\____________\\ \\__\\ \\__\\ \\__/ /     \\ \\_______\\ \\_______\\ \\_______\\ \\_______\\ \\_______\\ \\_______\\ \\__\\\\ _\\        \\ \\__\\ \\__\\");
+                    WriteLine("                                      \\|____________|\\|__|\\|__|\\|__|/       \\|_______|\\|_______|\\|_______|\\|_______|\\|_______|\\|_______|\\|__|\\|__|        \\|__|\\|__|");
+                    changeColorCounter = 0;
+                    rgbCycleCounter++;
+                }
+                ForegroundColor = ConsoleColor.White;
+                SetCursorPosition(menuX, menuY);
+                WriteLine("Press 0 for How to Play");
+
+                SetCursorPosition(menuX, menuY + 2);
+                WriteLine("Press 1 to start new game");
+
+                //menuY += space;
+                SetCursorPosition(menuX, menuY + 4);
+                WriteLine("Press 2 to start current round: {0}", currentLevelIndex + 1);
+
+                //menuY += space;
+                SetCursorPosition(menuX, menuY + 6);
+                WriteLine("Press 3 for Custom Level Editor");
+
+                //menuY += space;
+                SetCursorPosition(menuX, menuY + 8);
+                WriteLine("Press 4 to Exit to Desktop");
                 while (KeyAvailable)
                 {
                     userKey = ReadKey(true).Key;
-                    if (userKey == ConsoleKey.D1 || userKey == ConsoleKey.D2 || userKey == ConsoleKey.D3)
+                    if (userKey == ConsoleKey.D1 || userKey == ConsoleKey.D2 || userKey == ConsoleKey.D3 || userKey == ConsoleKey.D4)
                         validKey = true;
+
+                    if (userKey == ConsoleKey.D0)
+                    {
+                        Instructions(menuX, menuY);
+                    }
                 }
             }
             gameInProgress = true;
@@ -70,12 +143,53 @@ namespace WaveDodger2
                     currentLevelIndex = 0;
                     break;
 
-                case ConsoleKey.D3:
+                case ConsoleKey.D4:
                     Environment.Exit(0);
                     break;
-                    
-            }
 
+            }
+            Clear();
+        }
+
+        static void Instructions(int menuX, int menuY)
+        {
+            CursorVisible = false;
+            ForegroundColor = ConsoleColor.White;
+            int space = 2;
+            menuY -= 30;
+            Clear();
+            SetCursorPosition(menuX, menuY);
+            WriteLine("INSTRUCTIONS");
+
+            menuY += space;
+            SetCursorPosition(menuX, menuY);
+
+            WriteLine("Your player is: {0}", Player.DEFAULT_PLAYER_CHAR);
+
+            menuY += space;
+            SetCursorPosition(menuX, menuY);
+
+            WriteLine("Dodge the waves of enemies ({0})", Enemy.DEFAULT_ENEMY_CHAR);
+
+            menuY += space;
+            SetCursorPosition(menuX, menuY);
+
+            WriteLine("Collect all the coins ({0})", Coin.DEFAULT_COIN_CHAR);
+
+            menuY += space;
+            SetCursorPosition(menuX, menuY);
+
+            WriteLine("and most importantly... DONT FUCKING DIE... have fun :)");
+
+            menuY += space;
+            SetCursorPosition(menuX, menuY);
+
+            ForegroundColor = ConsoleColor.Cyan;
+            WriteLine("Press enter to return to menu");
+            ForegroundColor = ConsoleColor.Black;
+            ReadLine();
+            ResetColor();
+            Clear();
         }
 
         static void WinScreen(int currentLevelIndex, int numberOfLevels)
@@ -102,6 +216,77 @@ namespace WaveDodger2
                     ReadKey(false);
                 }
             }//end of if statement
+        }
+
+        static void DeathScreen(ref bool gameInProgress)
+        {
+            int menuYPos = 35;
+            int youFuckingDiedYPos = 10;
+            bool validKey = false;
+            int colorCounter = 0;
+            int blinkCounter = 0;
+            int blinkCounterMax = 600;
+            ConsoleKey userNumPress = ConsoleKey.NoName;
+
+            ForegroundColor = ConsoleColor.White;
+            Clear();
+            SetCursorPosition(0, menuYPos);
+            WriteLine("                                                 PRESS 1 TO RESTART CURRENT ROUND");
+            WriteLine("                                                 PRESS 2 TO EXIT TO MAIN MENU");
+            WriteLine("                                                 PRESS 3 TO EXIT TO DESKTOP");
+            ForegroundColor = ConsoleColor.DarkRed;
+            do
+            {
+                SetCursorPosition(0, youFuckingDiedYPos);
+                WriteLine("                     ██╗   ██╗ ██████╗ ██╗   ██╗    ███████╗██╗   ██╗ ██████╗██╗  ██╗██╗███╗   ██╗ ██████╗     ██████╗ ██╗███████╗██████╗");
+                WriteLine("                     ╚██╗ ██╔╝██╔═══██╗██║   ██║    ██╔════╝██║   ██║██╔════╝██║ ██╔╝██║████╗  ██║██╔════╝     ██╔══██╗██║██╔════╝██╔══██╗");
+                WriteLine("                      ╚████╔╝ ██║   ██║██║   ██║    █████╗  ██║   ██║██║     █████╔╝ ██║██╔██╗ ██║██║  ███╗    ██║  ██║██║█████╗  ██║  ██║");
+                WriteLine("                       ╚██╔╝  ██║   ██║██║   ██║    ██╔══╝  ██║   ██║██║     ██╔═██╗ ██║██║╚██╗██║██║   ██║    ██║  ██║██║██╔══╝  ██║  ██║");
+                WriteLine("                        ██║   ╚██████╔╝╚██████╔╝    ██║     ╚██████╔╝╚██████╗██║  ██╗██║██║ ╚████║╚██████╔╝    ██████╔╝██║███████╗██████╔╝");
+                WriteLine("                        ╚═╝    ╚═════╝  ╚═════╝     ╚═╝      ╚═════╝  ╚═════╝╚═╝  ╚═╝╚═╝╚═╝  ╚═══╝ ╚═════╝     ╚═════╝ ╚═╝╚══════╝╚═════╝");
+
+                if (blinkCounter == blinkCounterMax)
+                {
+                    blinkCounter = 0;
+                    switch (colorCounter)
+                    {
+                        case 0:
+                            ForegroundColor = ConsoleColor.DarkRed;
+                            colorCounter++;
+                            break;
+                        case 1:
+                            ForegroundColor = ConsoleColor.Black;
+                            colorCounter = 0;
+                            break;
+                    }//end of switch statement
+                }//end of if statement
+                if (KeyAvailable)
+                {
+                    userNumPress = ReadKey(true).Key;
+
+                    switch (userNumPress)
+                    {
+                        case ConsoleKey.D1:
+                            gameInProgress = true;
+                            validKey = true;
+                            break;
+
+                        case ConsoleKey.D2:
+                            gameInProgress = false;
+                            validKey = true;
+                            break;
+
+                        case ConsoleKey.D3:
+                            Environment.Exit(0);
+                            break;
+                    }
+
+
+                }//end of if statement
+                blinkCounter++;
+            } while (!validKey); //end of loop
+            ResetColor();
+            Clear();
         }
 
         static ConsoleKey Pause(GameArea area)
@@ -229,26 +414,30 @@ namespace WaveDodger2
                     win = true;
             }
 
-            current.Player1.ResetStats();
-            Coin.Reset(current.Coins);
             Clear();
             if (win)
             {
                 if (currentLevelIndex != numberOfLevels - 1)
                 {
                     currentLevelIndex++;
-                    WinScreen(currentLevelIndex, numberOfLevels);
+                    WinScreen(currentLevelIndex, numberOfLevels); //if the user is proceeding to the next level
                 }
-                else
+                else //user completes last level of the game
                 {
-                    gameInProgress = false;
+                    //display the winning screen
                 }
             }
             else
             {
                 gameInProgress = false;
                 Clear();
+                if (current.Player1.LivesRemaining == 0)
+                    DeathScreen(ref gameInProgress);
             }
-        }
+
+            current.Player1.ResetStats();
+            Coin.Reset(current.Coins);
+        }//end of method
+
     }//end of class
 }//end of namespace
