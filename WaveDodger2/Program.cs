@@ -7,6 +7,7 @@ using static System.Console;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Media;
 
 namespace WaveDodger2
 {
@@ -48,10 +49,12 @@ namespace WaveDodger2
 
         static void TitleScreen(ref int currentLevelIndex, ref bool gameInProgress)
         {
-            int titleY = 25;
+            SoundPlayer titleMusic = new SoundPlayer();
+            titleMusic.SoundLocation = @"..\..\sound\l0-365.wav";
+            titleMusic.PlayLooping();
+            int titleY = 10;
             int menuX = 85;
-            int menuY = 40;
-            int space = 2;
+            int menuY = 25;
             int changeColorValue = 1000;
             int changeColorCounter = changeColorValue - 1;
             int rgbCycleCounter = 1;
@@ -113,17 +116,20 @@ namespace WaveDodger2
                 SetCursorPosition(menuX, menuY + 2);
                 WriteLine("Press 1 to start new game");
 
-                //menuY += space;
                 SetCursorPosition(menuX, menuY + 4);
                 WriteLine("Press 2 to start current round: {0}", currentLevelIndex + 1);
 
-                //menuY += space;
                 SetCursorPosition(menuX, menuY + 6);
                 WriteLine("Press 3 for Custom Level Editor");
 
-                //menuY += space;
                 SetCursorPosition(menuX, menuY + 8);
                 WriteLine("Press 4 to Exit to Desktop");
+
+                SetCursorPosition(menuX, menuY + 14);
+                WriteLine("Developed by Ethan Briffett");
+
+                SetCursorPosition(menuX, menuY + 16);
+                WriteLine("Soundtrack by Darnu-Pop, Studio Megaane, 8 Bit Universe, JHN Studio");
                 while (KeyAvailable)
                 {
                     userKey = ReadKey(true).Key;
@@ -148,6 +154,7 @@ namespace WaveDodger2
                     break;
 
             }
+            titleMusic.Stop();
             Clear();
         }
 
@@ -352,6 +359,7 @@ namespace WaveDodger2
             Enemy.ChangeSide(current.Enemies, current.Area, current.Rnd);
             Enemy.RenderInitial(current.Enemies);
             current.Player1.InitializePosition(current.Area);
+            current.Music.PlayLooping();
         }
 
         static void NewGame(Level current, ref int currentLevelIndex, int numberOfLevels, ref bool gameInProgress)
@@ -413,7 +421,6 @@ namespace WaveDodger2
                 if (current.Player1.CoinsCollected == current.Coins.Length)
                     win = true;
             }
-
             Clear();
             if (win)
             {
@@ -424,6 +431,7 @@ namespace WaveDodger2
                 }
                 else //user completes last level of the game
                 {
+                    gameInProgress = false;
                     //display the winning screen
                 }
             }
@@ -434,10 +442,22 @@ namespace WaveDodger2
                 if (current.Player1.LivesRemaining == 0)
                     DeathScreen(ref gameInProgress);
             }
-
+            current.Music.Stop();
             current.Player1.ResetStats();
             Coin.Reset(current.Coins);
         }//end of method
 
     }//end of class
 }//end of namespace
+
+/*
+ * CREDITS:
+ DEVELOPED BY ETHAN BRIFFETT
+ PROJ3CT DA3DALU5 SOFTWARES
+
+ SOUNDTRACK CREDITS:
+ Darnu-Pop 
+ Studio Megaane
+ 8 Bit Universe
+ JHN Studio
+ * */

@@ -38,6 +38,8 @@ namespace WaveDodger2
         public const ConsoleColor LEVEL_1_ENEMY_BACK_COLOR = Enemy.DEFAULT_ENEMY_BACKCOLOR;
         //level 1 difficulty parameter
         public const int LEVEL_1_DIFFICULTY = 400;
+        //level 1 sound file location
+        public const string LEVEL_1_SOUNDLOCATION = @"../../sound/l1-love4eva.wav";
 
 
 
@@ -70,6 +72,8 @@ namespace WaveDodger2
         public const ConsoleColor LEVEL_2_ENEMY_BACK_COLOR = Enemy.DEFAULT_ENEMY_BACKCOLOR;
         //level 2 difficulty parameter
         public const int LEVEL_2_DIFFICULTY = 350;
+        //level 2 sound file location
+        public const string LEVEL_2_SOUNDLOCATION = @"../../sound/l2-ddu.wav";
 
 
         //LEVEL 3 PARAMETERS
@@ -101,6 +105,8 @@ namespace WaveDodger2
         public const ConsoleColor LEVEL_3_ENEMY_BACK_COLOR = Enemy.DEFAULT_ENEMY_BACKCOLOR;
         //level 3 difficulty parameter
         public const int LEVEL_3_DIFFICULTY = 300;
+        //level 3 sound file location
+        public const string LEVEL_3_SOUNDLOCATION = @"../../sound/l3-unravel.wav";
 
 
 
@@ -133,9 +139,11 @@ namespace WaveDodger2
         public const ConsoleColor LEVEL_4_ENEMY_BACK_COLOR = Enemy.DEFAULT_ENEMY_BACKCOLOR;
         //level 4 difficulty parameter
         public const int LEVEL_4_DIFFICULTY = 250;
+        //level 4 sound file location
+        public const string LEVEL_4_SOUNDLOCATION = @"../../sound/l4-godzilla.wav";
 
 
-        
+
         //LEVEL 5 PARAMETERS
 
         //level 5 player parameters
@@ -165,6 +173,8 @@ namespace WaveDodger2
         public const ConsoleColor LEVEL_5_ENEMY_BACK_COLOR = Enemy.DEFAULT_ENEMY_BACKCOLOR;
         //level 5 difficulty parameter
         public const int LEVEL_5_DIFFICULTY = 250;
+        //level 5 sound file location
+        public const string LEVEL_5_SOUNDLOCATION = @"../../sound/l5-blackswan.wav";
 
 
     }
