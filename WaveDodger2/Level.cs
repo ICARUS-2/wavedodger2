@@ -12,7 +12,7 @@ namespace WaveDodger2
         private const int DEFAULT_NUMBER_OF_COINS = 5;
         private const int DEFAULT_NUMBER_OF_ENEMIES = 20;
         private const int DEFAULT_DIFFICULTY = 250;
-        private const string DEFAULT_SOUNDLOCATION = @"..\..\sound\l0-365.wav";
+        private const string DEFAULT_SOUNDLOCATION = @"..\..\sound\l1-love4eva.wav";
         private SoundPlayer _music = new SoundPlayer(); //Instructions screen: 365 8-bit l1: Love4Eva 8-bit l2:Ddu Du Ddu Du 8-bit  l3: Unravel 8 bit l4: Godzilla 8 bit l5:Black Swan 8-bit
         private Random _rnd;
         private Player _player1;

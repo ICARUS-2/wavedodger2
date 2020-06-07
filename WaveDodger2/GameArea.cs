@@ -75,6 +75,7 @@ namespace WaveDodger2
             MoreLivesRemainingColor = DEFAULT_MORE_LIVES_REMAINING_COLOR;
             TwoLivesRemainingColor = DEFAULT_TWO_LIVES_REMAINING_COLOR;
             OneLifeRemainingColor = DEFAULT_ONE_LIFE_REMAINING_COLOR;
+            CalculateLimits();
         }
         
         public GameArea(char screengrassChar_, char borderChar_, ConsoleColor screengrassForeColor_, ConsoleColor screengrassBackColor_, ConsoleColor borderForeColor_, ConsoleColor borderBackColor_, int width_, int height_, int borderWidth_) //advanced editor

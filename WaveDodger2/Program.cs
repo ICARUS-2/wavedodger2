@@ -8,11 +8,36 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Media;
-
 namespace WaveDodger2
 {
     class Program
     {
+        const ConsoleKey HOW_TO_PLAY = ConsoleKey.D0;
+        const ConsoleKey NEW_GAME = ConsoleKey.D1;
+        const ConsoleKey CURRENT_ROUND = ConsoleKey.D2;
+        const ConsoleKey EDITOR_MODE = ConsoleKey.D3;
+        const ConsoleKey EXIT_TO_DESKTOP = ConsoleKey.D4;
+
+        const ConsoleKey SIMPLE_EDITOR = ConsoleKey.D1;
+        const ConsoleKey ADVANCED_EDITOR = ConsoleKey.D2;
+        const ConsoleKey EXIT_EDITOR = ConsoleKey.D3;
+
+        const ConsoleKey CHOICE_1 = ConsoleKey.D1;
+        const ConsoleKey CHOICE_2 = ConsoleKey.D2;
+
+        const ConsoleColor EDITOR_COLOR = ConsoleColor.Cyan;
+
+        const int EDITOR_MIN_WIDTH = 20;
+        const int EDITOR_MAX_WIDTH = 150;
+        const int EDITOR_MIN_HEIGHT = 15;
+        const int EDITOR_MAX_HEIGHT = 50;
+        const int EDITOR_MIN_COINS = 1;
+        const int EDITOR_MAX_COINS = 50;
+        const int EDITOR_MIN_ENEMIES = 1;
+        const int EDITOR_MAX_ENEMIES = 200;
+        const int EDITOR_MIN_DIFFICULTY = 100;
+        const int EDITOR_MAX_DIFFICULTY = 4000;
+
         [DllImport("user32.dll")]
         public static extern bool ShowWindow(System.IntPtr hWnd, int cmdShow);
         static void Main(string[] args)
@@ -133,23 +158,28 @@ namespace WaveDodger2
                 while (KeyAvailable)
                 {
                     userKey = ReadKey(true).Key;
-                    if (userKey == ConsoleKey.D1 || userKey == ConsoleKey.D2 || userKey == ConsoleKey.D3 || userKey == ConsoleKey.D4)
+                    if (userKey == NEW_GAME || userKey == CURRENT_ROUND || userKey == EXIT_TO_DESKTOP)
                         validKey = true;
 
-                    if (userKey == ConsoleKey.D0)
+                    if (userKey == HOW_TO_PLAY)
                     {
                         Instructions(menuX, menuY);
+                    }
+
+                    if (userKey == EDITOR_MODE)
+                    {
+                        LevelEditorMode();
                     }
                 }
             }
             gameInProgress = true;
             switch (userKey)
             {
-                case ConsoleKey.D1:
+                case NEW_GAME:
                     currentLevelIndex = 0;
                     break;
 
-                case ConsoleKey.D4:
+                case EXIT_TO_DESKTOP:
                     Environment.Exit(0);
                     break;
 
@@ -163,7 +193,7 @@ namespace WaveDodger2
             CursorVisible = false;
             ForegroundColor = ConsoleColor.White;
             int space = 2;
-            menuY -= 30;
+            menuY = 30;
             Clear();
             SetCursorPosition(menuX, menuY);
             WriteLine("INSTRUCTIONS");
@@ -405,7 +435,6 @@ namespace WaveDodger2
                                 Environment.Exit(0);
                                 break;
                         }
-
                     }
                     current.Player1.Move(userKey, current.Area);
                     current.Player1.Draw(current.Area);
@@ -447,6 +476,226 @@ namespace WaveDodger2
             Coin.Reset(current.Coins);
         }//end of method
 
+        static void LevelEditorMode()
+        {
+            bool exitEditor = false;
+            bool editorRunning = true;
+            ConsoleKey userKey;
+            Level custom = new Level();
+            while (!exitEditor)
+            {
+                userKey = GetEditorMode();
+                switch (userKey)
+                {
+                    case SIMPLE_EDITOR:
+                        custom = SimpleEditor();
+                        break;
+
+                    case ADVANCED_EDITOR:
+                        custom = AdvancedEditor();
+                        break;
+
+                    case EXIT_EDITOR:
+                        return;
+                }
+
+                editorRunning = true;
+
+                while (editorRunning)
+                {
+                    NewCustomGame(custom, ref editorRunning);
+                }
+            }
+        }
+
+        static ConsoleKey GetEditorMode()
+        {
+            Clear();
+            ForegroundColor = EDITOR_COLOR;
+            WriteLine("===============LEVEL EDITOR===============");
+            ForegroundColor = ConsoleColor.White;
+            WriteLine("\nSELECT EDITOR MODE:");
+            WriteLine("\n1 - SIMPLE EDITOR");
+            WriteLine("\n2 - ADVANCED EDITOR");
+            ConsoleKey userKey = ConsoleKey.NoName;
+            bool validKey = false;
+            while (!validKey)
+            {
+                userKey = ReadKey(true).Key;
+
+                if (userKey == SIMPLE_EDITOR || userKey == ADVANCED_EDITOR)
+                    validKey = true;
+            }
+            ResetColor();
+            return userKey;
+        }
+
+        static Level SimpleEditor()
+        {
+            int width;
+            int height;
+            int numberOfCoins;
+            int numberOfEnemies;
+            int difficulty;
+
+            //get level dimensions
+            Clear();
+            ForegroundColor = EDITOR_COLOR;
+            WriteLine("PLAY AREA INFO:");
+            ForegroundColor = ConsoleColor.White;
+
+            WriteLine("\nEnter the width of the play area ({0} - {1})", EDITOR_MIN_WIDTH, EDITOR_MAX_WIDTH);
+            width = ValInt(EDITOR_MIN_WIDTH, EDITOR_MAX_WIDTH, String.Format("ERROR: WIDTH CAN ONLY BE AN INTEGER BETWEEN {0} AND {1}", EDITOR_MIN_WIDTH, EDITOR_MAX_WIDTH)) ;
+
+            WriteLine("\nEnter the height of the play area ({0} - {1})", EDITOR_MIN_HEIGHT, EDITOR_MAX_HEIGHT);
+            height = ValInt(EDITOR_MIN_HEIGHT, EDITOR_MAX_HEIGHT, String.Format("ERROR: HEIGHT CAN ONLY BE AN INTEGER BETWEEN {0} AND {1}", EDITOR_MIN_HEIGHT, EDITOR_MAX_HEIGHT));
+
+            Clear();
+
+            //get coin amount
+            ForegroundColor = EDITOR_COLOR;
+            WriteLine("COIN INFO");
+            ForegroundColor = ConsoleColor.White;
+            WriteLine("\nEnter the number of coins in the game ({0} - {1})", EDITOR_MIN_COINS, EDITOR_MAX_COINS);
+
+            numberOfCoins = ValInt(EDITOR_MIN_COINS, EDITOR_MAX_COINS, String.Format("ERROR: NUMBER OF COINS CAN ONLY BE AN INTEGER BETWEEN {0} AND {1}", EDITOR_MIN_COINS, EDITOR_MAX_COINS));
+
+            Clear();
+            ForegroundColor = EDITOR_COLOR;
+            WriteLine("ENEMY INFO");
+            ForegroundColor = ConsoleColor.White;
+            WriteLine("\nEnter the number of enemies in the game ({0} - {1})", EDITOR_MIN_ENEMIES, EDITOR_MAX_ENEMIES);
+
+            numberOfEnemies = ValInt(EDITOR_MIN_ENEMIES, EDITOR_MAX_ENEMIES, String.Format("ERROR: NUMBER OF ENEMIES CAN ONLY BE AN INTEGER BETWEEN {0} AND {1}", EDITOR_MIN_ENEMIES, EDITOR_MAX_ENEMIES));
+
+            Clear();
+
+            ForegroundColor = EDITOR_COLOR;
+            WriteLine("DIFFICULTY");
+            ForegroundColor = ConsoleColor.White;
+            WriteLine("\nEnter the difficulty setting (lower = slower enemies) ({0} - {1})", EDITOR_MIN_DIFFICULTY, EDITOR_MAX_DIFFICULTY);
+
+            difficulty = ValInt(EDITOR_MIN_DIFFICULTY, EDITOR_MAX_DIFFICULTY, String.Format("ERROR: DIFFICULTY SETTING CAN ONLY BE BETWEEN {0} AND {1}", EDITOR_MIN_ENEMIES, EDITOR_MAX_ENEMIES));
+
+            ResetColor();
+
+            return new Level(width, height, numberOfCoins, numberOfEnemies, difficulty);
+        }
+
+        static Level AdvancedEditor()
+        {
+            throw new NotImplementedException();
+        }
+
+        static void NewCustomGame(Level custom, ref bool editorRunning)
+        {
+            bool cycleCollision;
+            bool win = false;
+            int difficultyCounter = 0;
+            ConsoleKey userKey;
+            ConsoleKey pauseMenuKey;
+
+            PrepareLevel(custom);
+            while (custom.Player1.LivesRemaining != 0 && custom.Player1.CoinsCollected != custom.Coins.Length)
+            {
+                cycleCollision = false;
+                difficultyCounter++;
+                Maximize();
+                CursorVisible = false;
+                custom.Area.UpdateDisplay(1, custom.Player1, custom.Coins);
+                while (KeyAvailable) //Check collision with enemies before moving, get the user's key press and move player based on it
+                {
+                    custom.Player1.HitTest(custom.Enemies, custom.Player1, ref cycleCollision);
+                    userKey = ReadKey(true).Key;
+                    if (userKey == ConsoleKey.Escape)
+                    {
+                        pauseMenuKey = Pause(custom.Area);
+                        switch (pauseMenuKey)
+                        {
+                            case ConsoleKey.D1:
+                                Clear();
+                                custom.Player1.ResetStats();
+                                Coin.Reset(custom.Coins);
+                                PrepareLevel(custom);
+                                break;
+
+                            case ConsoleKey.D2:
+                                Clear();
+                                custom.Player1.ResetStats();
+                                Coin.Reset(custom.Coins);
+                                editorRunning = false;
+                                return;
+
+                            case ConsoleKey.D3:
+                                Environment.Exit(0);
+                                break;
+                        }
+                    }
+                    custom.Player1.Move(userKey, custom.Area);
+                    custom.Player1.Draw(custom.Area);
+                }//end of inner while
+                custom.Player1.CheckCoinCollision(custom.Coins);
+                if (difficultyCounter == custom.Difficulty) //When it is time to move enemies, check their collision and move them
+                {
+                    custom.Player1.HitTest(custom.Enemies, custom.Player1, ref cycleCollision);
+                    Enemy.MoveEnemies(custom.Enemies, custom.Area, custom.Rnd);
+                    Enemy.Render(custom.Enemies, custom.Player1, custom.Area, custom.Coins, custom.Rnd);
+                    difficultyCounter = 0;
+                }
+                if (custom.Player1.CoinsCollected == custom.Coins.Length)
+                    win = true;
+            }
+
+            Clear();
+            if (win)
+            {
+                //display the win screen
+            }
+            else
+            {
+                editorRunning = false;
+                Clear();
+                if (custom.Player1.LivesRemaining == 0)
+                    DeathScreen(ref editorRunning);
+            }
+            custom.Music.Stop();
+            custom.Player1.ResetStats();
+            Coin.Reset(custom.Coins);
+        }
+
+        #region//INPUT VALIDATORS
+        static ConsoleKey TwoKeyChoices()
+        {
+            ConsoleKey userKey = ConsoleKey.NoName;
+            bool validKey = false;
+
+            while (!validKey)
+            {
+                userKey = ReadKey(true).Key;
+                if (userKey == CHOICE_1 || userKey == CHOICE_2)
+                    validKey = true;
+            }
+
+            return userKey;
+        }
+
+        static int ValInt(int minValue, int maxValue, string errorMessage)
+        {
+            bool isInt;
+            int userNumPress;
+            do
+            {
+                isInt = int.TryParse(Console.ReadLine(), out userNumPress);
+                if (!isInt | userNumPress < minValue | userNumPress > maxValue)
+                {
+                    Console.ForegroundColor = ConsoleColor.DarkRed;
+                    Console.WriteLine("{0}", errorMessage);
+                    Console.ResetColor();
+                }
+            } while (!isInt | userNumPress < minValue | userNumPress > maxValue);
+            return userNumPress;
+        }//end of function
+        #endregion 
     }//end of class
 }//end of namespace
 
