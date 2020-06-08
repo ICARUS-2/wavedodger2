@@ -12,6 +12,7 @@ namespace WaveDodger2
 {
     class Program
     {
+        #region//GLOBAL CONSTANTS
         const ConsoleKey HOW_TO_PLAY = ConsoleKey.D0;
         const ConsoleKey NEW_GAME = ConsoleKey.D1;
         const ConsoleKey CURRENT_ROUND = ConsoleKey.D2;
@@ -37,6 +38,8 @@ namespace WaveDodger2
         const int EDITOR_MAX_WIDTH = 150;
         const int EDITOR_MIN_HEIGHT = 15;
         const int EDITOR_MAX_HEIGHT = 50;
+        const int EDITOR_MIN_BORDER_SIZE = 3;
+        const int EDITOR_MAX_BORDER_SIZE = 20;
         const int EDITOR_MIN_COINS = 1;
         const int EDITOR_MAX_COINS = 50;
         const int EDITOR_MIN_ENEMIES = 1;
@@ -44,6 +47,7 @@ namespace WaveDodger2
         const int EDITOR_MIN_DIFFICULTY = 100;
         const int EDITOR_MAX_DIFFICULTY = 4000;
         const int HEIGHT_OFFSET = 3;
+        #endregion
 
         [DllImport("user32.dll")]
         public static extern bool ShowWindow(System.IntPtr hWnd, int cmdShow);
@@ -73,6 +77,7 @@ namespace WaveDodger2
             }
         }
 
+        #region//OUTSIDE GAME METHODS
         private static void Maximize()
         {
             //Sourced from https://stackoverflow.com/questions/22053112/maximizing-console-window-c-sharp/22053200
@@ -177,6 +182,7 @@ namespace WaveDodger2
                     if (userKey == EDITOR_MODE)
                     {
                         LevelEditorMode();
+                        titleMusic.PlayLooping();
                     }
                 }
             }
@@ -192,7 +198,6 @@ namespace WaveDodger2
                     break;
 
             }
-            titleMusic.Stop();
             Clear();
         }
 
@@ -213,13 +218,17 @@ namespace WaveDodger2
 
             menuY += space;
             SetCursorPosition(menuX, menuY);
+            WriteLine("W S A D to move");
+
+            menuY += space;
+            SetCursorPosition(menuX, menuY);
 
             WriteLine("Dodge the waves of enemies ({0})", Enemy.DEFAULT_ENEMY_CHAR);
 
             menuY += space;
             SetCursorPosition(menuX, menuY);
 
-            WriteLine("Collect all the coins ({0})", Coin.DEFAULT_COIN_CHAR);
+            WriteLine("Collect all the coins ({0}) by passing over them", Coin.DEFAULT_COIN_CHAR);
 
             menuY += space;
             SetCursorPosition(menuX, menuY);
@@ -236,6 +245,22 @@ namespace WaveDodger2
             ResetColor();
             Clear();
         }
+
+        static void DisplayCrashInfo(Exception ex)
+        {
+            ResetColor();
+            Clear();
+            SetCursorPosition(0, 0);
+            ForegroundColor = ConsoleColor.DarkRed;
+            Write("ERROR: EXCEPTION THROWN");
+            Write(ex.StackTrace);
+            WriteLine("\n\nDETAILS: {0}", ex.Message);
+            ReadKey();
+        }
+
+        #endregion
+
+        #region//MAIN GAME METHODS
 
         static void MoveToNextRoundScreen(int currentLevelIndex, int numberOfLevels)
         {
@@ -455,18 +480,6 @@ namespace WaveDodger2
             return menuKeyPress;
         }
 
-        static void DisplayCrashInfo(Exception ex)
-        {
-            ResetColor();
-            Clear();
-            SetCursorPosition(0, 0);
-            ForegroundColor = ConsoleColor.DarkRed;
-            Write("ERROR: EXCEPTION THROWN");
-            Write(ex.StackTrace);
-            WriteLine("\n\nDETAILS: {0}", ex.Message);
-            ReadKey();
-        }
-
         static void PrepareLevel(Level current)
         {
             current.Area.Render();
@@ -502,6 +515,7 @@ namespace WaveDodger2
                 while (KeyAvailable) //Check collision with enemies before moving, get the user's key press and move player based on it
                 {
                     current.Player1.HitTest(current.Enemies, current.Player1, ref cycleCollision);
+                    current.Player1.CheckCoinCollision(current.Coins);
                     userKey = ReadKey(true).Key;
                     if (userKey == ConsoleKey.Escape)
                     {
@@ -567,7 +581,10 @@ namespace WaveDodger2
             Coin.Reset(current.Coins);
         }//end of method
 
-        #region//DEDICATED LEVEL EDITOR METHODS
+        #endregion
+
+        #region//LEVEL EDITOR METHODS
+
         static void LevelEditorMode()
         {
             bool exitEditor = false;
@@ -636,7 +653,7 @@ namespace WaveDodger2
             Clear();
             ForegroundColor = EDITOR_COLOR;
             WriteLine("PLAY AREA INFO:");
-            ForegroundColor = ConsoleColor.White;
+            ResetColor();
 
             WriteLine("\nEnter the width of the play area ({0} - {1})", EDITOR_MIN_WIDTH, EDITOR_MAX_WIDTH);
             width = ValInt(EDITOR_MIN_WIDTH, EDITOR_MAX_WIDTH, String.Format("ERROR: WIDTH CAN ONLY BE AN INTEGER BETWEEN {0} AND {1}", EDITOR_MIN_WIDTH, EDITOR_MAX_WIDTH)) ;
@@ -649,7 +666,7 @@ namespace WaveDodger2
             //get coin amount
             ForegroundColor = EDITOR_COLOR;
             WriteLine("COIN INFO");
-            ForegroundColor = ConsoleColor.White;
+            ResetColor();
             WriteLine("\nEnter the number of coins in the game ({0} - {1})", EDITOR_MIN_COINS, EDITOR_MAX_COINS);
 
             numberOfCoins = ValInt(EDITOR_MIN_COINS, EDITOR_MAX_COINS, String.Format("ERROR: NUMBER OF COINS CAN ONLY BE AN INTEGER BETWEEN {0} AND {1}", EDITOR_MIN_COINS, EDITOR_MAX_COINS));
@@ -658,7 +675,7 @@ namespace WaveDodger2
             Clear();
             ForegroundColor = EDITOR_COLOR;
             WriteLine("ENEMY INFO");
-            ForegroundColor = ConsoleColor.White;
+            ResetColor();
             WriteLine("\nEnter the number of enemies in the game ({0} - {1})", EDITOR_MIN_ENEMIES, EDITOR_MAX_ENEMIES);
 
             numberOfEnemies = ValInt(EDITOR_MIN_ENEMIES, EDITOR_MAX_ENEMIES, String.Format("ERROR: NUMBER OF ENEMIES CAN ONLY BE AN INTEGER BETWEEN {0} AND {1}", EDITOR_MIN_ENEMIES, EDITOR_MAX_ENEMIES));
@@ -670,17 +687,427 @@ namespace WaveDodger2
             ForegroundColor = ConsoleColor.White;
             WriteLine("\nEnter the difficulty setting (lower = slower enemies) ({0} - {1})", EDITOR_MIN_DIFFICULTY, EDITOR_MAX_DIFFICULTY);
 
-            difficulty = ValInt(EDITOR_MIN_DIFFICULTY, EDITOR_MAX_DIFFICULTY, String.Format("ERROR: DIFFICULTY SETTING CAN ONLY BE BETWEEN {0} AND {1}", EDITOR_MIN_ENEMIES, EDITOR_MAX_ENEMIES));
+            difficulty = ValInt(EDITOR_MIN_DIFFICULTY, EDITOR_MAX_DIFFICULTY, String.Format("ERROR: DIFFICULTY SETTING CAN ONLY BE BETWEEN {0} AND {1}", EDITOR_MIN_DIFFICULTY, EDITOR_MAX_DIFFICULTY));
 
             ResetColor();
             Clear();
             return new Level(width, height, numberOfCoins, numberOfEnemies, difficulty);
         }
 
+        public static readonly Dictionary<int, string> editorSoundtracks = new Dictionary<int, string>()
+        {
+            {1, @"../../sound/l0-365.wav"},
+            {2, @"../../sound/l1-love4eva.wav"},
+            {3, @"../../sound/l2-ddu.wav"},
+            {4, @"../../sound/l3-unravel.wav"},
+            {5, @"../../sound/l4-godzilla.wav"},
+            {6, @"../../sound/l5-blackswan.wav"},
+            {7, @"../../sound/wd1-hihigh.wav"},
+            {8, @"../../sound/nosound.wav"}
+        };
+
+        public static readonly Dictionary<int, ConsoleColor> colors = new Dictionary<int, ConsoleColor>()
+        {
+            {1, ConsoleColor.White},
+            {2, ConsoleColor.Gray},
+            {3, ConsoleColor.DarkGray},
+            {4, ConsoleColor.Black},
+            {5, ConsoleColor.DarkRed},
+            {6, ConsoleColor.Red},
+            {7, ConsoleColor.DarkYellow},
+            {8, ConsoleColor.Yellow},
+            {9, ConsoleColor.Green},
+            {10, ConsoleColor.DarkGreen},
+            {11, ConsoleColor.DarkBlue},
+            {12, ConsoleColor.Blue},
+            {13, ConsoleColor.Cyan},
+            {14, ConsoleColor.DarkCyan},
+            {15, ConsoleColor.DarkMagenta},
+            {16, ConsoleColor.Magenta},
+        };
+
+        static void DisplayColors()
+        {
+            for (int i = 1; i < colors.Count + 1; i++)
+            {
+                ForegroundColor = colors[i];
+                if (colors[i] == ConsoleColor.Black)
+                    BackgroundColor = ConsoleColor.White;
+
+                WriteLine("{0} - {1}", i, colors[i]);
+                ResetColor();
+            }
+            ResetColor();
+        }
+
+        static void DisplaySoundtrack()
+        {
+            WriteLine("1 - Title theme");
+            WriteLine("2 - Level 1 theme");
+            WriteLine("3 - Level 2 theme");
+            WriteLine("4 - Level 3 theme");
+            WriteLine("5 - Level 4 theme");
+            WriteLine("6 - Level 5 theme");
+            WriteLine("7 - WaveDodger I theme");
+            WriteLine("8 - No music");
+        }
+
         static Level AdvancedEditor()
         {
-            throw new NotImplementedException();
-        }
+            //player parameters
+            int playerStartingLives = Player.DEFAULT_STARTING_LIVES;
+            char playerChar = Player.DEFAULT_PLAYER_CHAR; //give option to set as default 
+            ConsoleColor playerForeColor = Player.DEFAULT_FORE_COLOR; //give option to set as default
+            ConsoleColor playerBackColor = Player.DEFAULT_BACK_COLOR; //give option to set as default
+
+            //game area parameters
+            char screengrassChar = GameArea.DEFAULT_SCREENGRASS_CHAR; //give option to set as default
+            char borderChar = GameArea.DEFAULT_BORDER_CHAR; //give option to set as default
+            ConsoleColor screengrassForeColor = GameArea.DEFAULT_SCREENGRASS_FORECOLOR; //give option to set as default
+            ConsoleColor screengrassBackColor = GameArea.DEFAULT_SCREENGRASS_BACKCOLOR; //give option to set as default
+            ConsoleColor borderForeColor = GameArea.DEFAULT_BORDER_FORECOLOR; //give option to set as default
+            ConsoleColor borderBackColor = GameArea.DEFAULT_BORDER_BACKCOLOR; //give option to set as default
+            int width = GameArea.DEFAULT_WIDTH;
+            int height = GameArea.DEFAULT_HEIGHT;
+            int borderWidth = GameArea.DEFAULT_BORDER_WIDTH;
+
+            //coin parameters
+            int numberOfCoins = EDITOR_MIN_COINS;
+            char coinChar = Coin.DEFAULT_COIN_CHAR;//give option to set as default
+            ConsoleColor coinForeColor = Coin.DEFAULT_COIN_FORECOLOR;//give option to set as default
+            ConsoleColor coinBackColor = Coin.DEFAULT_COIN_BACKCOLOR;//give option to set as default
+
+            //enemy parameters
+            int numberOfEnemies = EDITOR_MIN_ENEMIES;
+            char enemyChar = Enemy.DEFAULT_ENEMY_CHAR; //give option to set as default
+            ConsoleColor enemyForeColor = Enemy.DEFAULT_ENEMY_FORECOLOR;//give option to set as default
+            ConsoleColor enemyBackColor = Enemy.DEFAULT_ENEMY_BACKCOLOR;//give option to set as default
+            int difficulty = EDITOR_MIN_DIFFICULTY;
+
+            string soundLocation = Level.DEFAULT_SOUNDLOCATION;
+
+            ConsoleKey userKey;
+            bool confirmAll = false;
+            bool confirmSection = false;
+
+            while (!confirmAll)
+            {
+                while (!confirmSection) //get player cosmetic choices
+                {
+                    ForegroundColor = EDITOR_COLOR;
+                    WriteLine("PLAYER COSMETICS");
+                    ResetColor();
+
+                    WriteLine("\n1 - Customize");
+                    WriteLine("\n2 - Set all to Default");
+
+                    userKey = TwoKeyChoices();
+                    Clear();
+                    if (userKey == CHOICE_1)
+                    { 
+                        ForegroundColor = EDITOR_COLOR;
+                        WriteLine("PLAYER COSMETICS");
+                        ResetColor();
+
+                        WriteLine("\nType a character to use as your player");
+                        playerChar = ReadKey(true).KeyChar;
+                        WriteLine("Your character is {0}", playerChar);
+
+                        WriteLine("\nSelect your character's color");
+                        DisplayColors();
+                        playerForeColor = colors[ValInt(1, colors.Count, "ERROR: COLOR INDEX NOT FOUND")];
+                        WriteLine("\nYour character's color is {0}", playerForeColor);
+
+                        WriteLine("\nNow select your character's background color");
+                        playerBackColor = colors[ValInt(1, colors.Count, "ERROR: COLOR INDEX NOT FOUND")];
+                        WriteLine("\nYour character's background color is {0}", playerBackColor);
+                    }
+
+                    Write("Your character will look like this: ");
+                    ForegroundColor = playerForeColor;
+                    BackgroundColor = playerBackColor;
+                    Write(playerChar);
+                    ResetColor();
+                    WriteLine("\n\nIs this okay? [Y/N]");
+
+                    confirmSection = ConfirmKeyPress();
+                    Clear();
+                }//get player cosmetic choices
+                confirmSection = false;
+
+                while (!confirmSection)//get amount of lives
+                {
+                    Clear();
+                    ForegroundColor = EDITOR_COLOR;
+                    WriteLine("AMOUNT OF LIVES");
+                    ResetColor();
+                    WriteLine("\nEnter the number of lives you would like your player to have");
+                    playerStartingLives = ValInt(1, int.MaxValue, String.Format("ERROR: LIVES CAN ONLY BE AN INTEGER BETWEEN {0} and {1}", 1, int.MaxValue));
+                    WriteLine("Your player will have {0} lives, is this okay? [Y/N]", playerStartingLives);
+                    confirmSection = ConfirmKeyPress();
+                }//get amount of lives
+
+                confirmSection = false;
+
+                while (!confirmSection) //get play area cosmetic choices
+                {
+                    Clear();
+                    ForegroundColor = EDITOR_COLOR;
+                    WriteLine("GAME AREA COSMETICS");
+                    ResetColor();
+
+                    WriteLine("\n1 - Customize");
+                    WriteLine("\n2 - Set all to Default");
+
+                    userKey = TwoKeyChoices();
+                    Clear();
+
+                    if (userKey == CHOICE_1)
+                    {
+                        ForegroundColor = EDITOR_COLOR;
+                        WriteLine("GAME AREA COSMETICS");
+                        ResetColor();
+
+                        WriteLine("\nType a character to use to draw the play area");
+                        screengrassChar = ReadKey(true).KeyChar;
+                        WriteLine("\nPlay area background character is {0}", screengrassChar);
+
+                        WriteLine("\nNow type a character used for drawing the border");
+                        borderChar = ReadKey(true).KeyChar;
+                        WriteLine("\nBorder character is {0}", borderChar);
+
+                        WriteLine("\nSelect the foreground color for the play area character");
+                        DisplayColors();
+                        screengrassForeColor = colors[ValInt(1, colors.Count, "ERROR: COLOR INDEX NOT FOUND")];
+                        WriteLine("\nForeground color for the play area character is {0}", screengrassForeColor);
+
+                        WriteLine("\nNow select the background color for the play area character");
+                        screengrassBackColor = colors[ValInt(1, colors.Count, "ERROR: COLOR INDEX NOT FOUND")];
+                        WriteLine("\nBackground color for the play area character is {0}", screengrassBackColor);
+
+                        WriteLine("\nSelect the foreground color for the border");
+                        borderForeColor = colors[ValInt(1, colors.Count, "ERROR: COLOR INDEX NOT FOUND")];
+                        WriteLine("\nBorder foreground color is {0}", borderForeColor);
+
+                        WriteLine("\nNow select the background color for the border");
+                        borderBackColor = colors[ValInt(1, colors.Count, "ERROR: COLOR INDEX NOT FOUND")];
+                        WriteLine("\nBorder background color is {0}", borderBackColor);
+                    }
+                    Clear();
+                    Write("Play area background will look like this: ");
+                    ForegroundColor = screengrassForeColor;
+                    BackgroundColor = screengrassBackColor;
+                    WriteLine(screengrassChar);
+
+                    ResetColor();
+
+                    Write("\nBorder will look like this: ");
+                    ForegroundColor = borderForeColor;
+                    BackgroundColor = borderBackColor;
+                    Write(borderChar);
+
+                    ResetColor();
+
+                    WriteLine("\nIs this okay? [Y/N]");
+                    confirmSection = ConfirmKeyPress();
+                } //get play area cosmetic choices
+
+                confirmSection = false;
+
+                while (!confirmSection) //get game area dimensions
+                {
+                    Clear();
+
+                    ForegroundColor = EDITOR_COLOR;
+                    WriteLine("PLAY AREA DIMENSIONS");
+                    ForegroundColor = ConsoleColor.White;
+
+                    WriteLine("\nEnter the width of the play area ({0} - {1})", EDITOR_MIN_WIDTH, EDITOR_MAX_WIDTH);
+                    width = ValInt(EDITOR_MIN_WIDTH, EDITOR_MAX_WIDTH, String.Format("ERROR: WIDTH CAN ONLY BE AN INTEGER BETWEEN {0} AND {1}", EDITOR_MIN_WIDTH, EDITOR_MAX_WIDTH));
+
+                    WriteLine("\nEnter the height of the play area ({0} - {1})", EDITOR_MIN_HEIGHT, EDITOR_MAX_HEIGHT);
+                    height = ValInt(EDITOR_MIN_HEIGHT, EDITOR_MAX_HEIGHT, String.Format("ERROR: HEIGHT CAN ONLY BE AN INTEGER BETWEEN {0} AND {1}", EDITOR_MIN_HEIGHT, EDITOR_MAX_HEIGHT));
+
+                    WriteLine("\nNow enter the width of the border ({0} - {1})", EDITOR_MIN_BORDER_SIZE, EDITOR_MAX_BORDER_SIZE);
+                    borderWidth = ValInt(EDITOR_MIN_BORDER_SIZE, EDITOR_MAX_BORDER_SIZE, String.Format("ERROR: BORDER WIDTH CAN ONLY BE AN INTEGER BETWEEN {0} AND {1}", EDITOR_MIN_BORDER_SIZE, EDITOR_MAX_BORDER_SIZE));
+
+                    WriteLine("\nWidth will be {0}, height will be {1}, and border width will be {2}. Is this okay? [Y/N]", width, height, borderWidth);
+                    confirmSection = ConfirmKeyPress();
+                }//get game area dimesions
+
+                confirmSection = false;
+
+                while (!confirmSection) //get coin cosmetics
+                {
+                    Clear();
+                    ForegroundColor = EDITOR_COLOR;
+                    WriteLine("COIN COSMETICS");
+                    ResetColor();
+
+                    WriteLine("\n1 - Customize");
+                    WriteLine("\n2 - Set all to Default");
+
+                    userKey = TwoKeyChoices();
+                    Clear();
+
+                    if (userKey == CHOICE_1)
+                    {
+                        ForegroundColor = EDITOR_COLOR;
+                        WriteLine("COIN COSMETICS");
+                        ResetColor();
+
+                        WriteLine("\nEnter the character to use for the coins");
+                        coinChar = ReadKey(true).KeyChar;
+                        WriteLine("\nThe coin character is {0}", coinChar);
+
+                        WriteLine("\nSelect the foreground color for the coins");
+                        DisplayColors();
+                        coinForeColor = colors[ValInt(1, colors.Count, "ERROR: COLOR INDEX NOT FOUND")];
+                        WriteLine("The coin foreground color is {0}", coinForeColor);
+
+                        WriteLine("\nNow select the background color for the coins");
+                        coinBackColor = colors[ValInt(1, colors.Count, "ERROR: COLOR INDEX NOT FOUND")];
+                        WriteLine("\nThe coin background color is {0}", coinBackColor);
+                    }
+                    Clear();
+
+                    Write("The coins will look like this: ");
+                    ForegroundColor = coinForeColor;
+                    BackgroundColor = coinBackColor;
+                    Write(coinChar);
+                    ResetColor();
+                    WriteLine("\n\nIs this okay? [Y/N]");
+                    confirmSection = ConfirmKeyPress();
+                }//get coin cosmetics
+
+                confirmSection = false;
+
+                while(!confirmSection) //get amount of coins
+                {
+                    Clear();
+                    ForegroundColor = EDITOR_COLOR;
+                    WriteLine("AMOUNT OF COINS");
+                    ResetColor();
+
+                    WriteLine("\nEnter the number of coins in the game ({0} - {1})", EDITOR_MIN_COINS, EDITOR_MAX_COINS);
+
+                    numberOfCoins = ValInt(EDITOR_MIN_COINS, EDITOR_MAX_COINS, String.Format("ERROR: NUMBER OF COINS CAN ONLY BE AN INTEGER BETWEEN {0} AND {1}", EDITOR_MIN_COINS, EDITOR_MAX_COINS));
+
+                    WriteLine("\nThe game will have {0} coins, is this okay? [Y/N]", numberOfCoins);
+
+                    confirmSection = ConfirmKeyPress();
+                }//get amount of coins
+
+                confirmSection = false;
+
+                while (!confirmSection) //get enemy cosmetic info
+                {
+                    Clear();
+                    ForegroundColor = EDITOR_COLOR;
+                    WriteLine("ENEMY COSMETICS");
+                    ResetColor();
+
+                    WriteLine("\n1 - Customize");
+                    WriteLine("\n2 - Set all to Default");
+
+                    userKey = TwoKeyChoices();
+                    Clear();
+
+                    if (userKey == CHOICE_1)
+                    {
+                        ForegroundColor = EDITOR_COLOR;
+                        WriteLine("ENEMY COSMETICS");
+                        ResetColor();
+
+                        WriteLine("\nEnter the character to use for the enemies");
+                        enemyChar = ReadKey(true).KeyChar;
+                        WriteLine("\nThe enemy character is {0}", enemyChar);
+
+                        WriteLine("\nSelect the foreground color for the enemies");
+                        DisplayColors();
+                        enemyForeColor = colors[ValInt(1, colors.Count, "ERROR: COLOR INDEX NOT FOUND")];
+                        WriteLine("The enemy foreground color is {0}", enemyForeColor);
+
+                        WriteLine("\nNow select the background color for the enemies");
+                        enemyBackColor = colors[ValInt(1, colors.Count, "ERROR: COLOR INDEX NOT FOUND")];
+                        WriteLine("\nThe enemy background color is {0}", enemyBackColor);
+                    }
+                    Clear();
+
+                    Write("The enemies will look like this: ");
+                    ForegroundColor = enemyForeColor;
+                    BackgroundColor = enemyBackColor;
+                    Write(enemyChar);
+                    ResetColor();
+                    WriteLine("\n\nIs this okay? [Y/N]");
+                    confirmSection = ConfirmKeyPress();
+                }//get enemy cosmetic info
+
+                confirmSection = false;
+
+                while (!confirmSection) //get amount of enemies
+                {
+                    Clear();
+                    ForegroundColor = EDITOR_COLOR;
+                    WriteLine("AMOUNT OF ENEMIES");
+                    ResetColor();
+
+                    WriteLine("\nEnter the number of enemies in the game ({0} - {1})", EDITOR_MIN_ENEMIES, EDITOR_MAX_ENEMIES);
+
+                    numberOfEnemies = ValInt(EDITOR_MIN_ENEMIES, EDITOR_MAX_ENEMIES, String.Format("ERROR: NUMBER OF ENEMIES CAN ONLY BE AN INTEGER BETWEEN {0} AND {1}", EDITOR_MIN_ENEMIES, EDITOR_MAX_ENEMIES));
+
+                    WriteLine("\nThe game will have {0} enemies, is this okay? [Y/N]", numberOfEnemies);
+
+                    confirmSection = ConfirmKeyPress();
+                }//get amount of enemies
+
+                confirmSection = false;
+
+                while (!confirmSection)
+                {
+                    ForegroundColor = EDITOR_COLOR;
+                    WriteLine("DIFFICULTY SETTING");
+                    ResetColor();
+                    WriteLine("\nEnter the difficulty setting (lower = slower enemies) ({0} - {1})", EDITOR_MIN_DIFFICULTY, EDITOR_MAX_DIFFICULTY);
+
+                    difficulty = ValInt(EDITOR_MIN_DIFFICULTY, EDITOR_MAX_DIFFICULTY, String.Format("ERROR: DIFFICULTY SETTING CAN ONLY BE BETWEEN {0} AND {1}", EDITOR_MIN_DIFFICULTY, EDITOR_MAX_DIFFICULTY));
+
+                    WriteLine("\nThe game's difficulty is {0}. Is this okay? [Y/N]", difficulty);
+
+                    confirmSection = ConfirmKeyPress();
+                }
+
+                confirmSection = false;
+
+                while (!confirmSection)
+                {
+                    Clear();
+                    ForegroundColor = EDITOR_COLOR;
+                    WriteLine("SOUNDTRACK SELECTION");
+                    ResetColor();
+
+                    DisplaySoundtrack();
+                    soundLocation = editorSoundtracks[ValInt(1, editorSoundtracks.Count, "ERROR: SOUNDTRACK INDEX NOT FOUND")];
+                    ResetColor();
+
+                    WriteLine("Is this soundtrack okay? [Y/N]");
+
+                    confirmSection = ConfirmKeyPress();
+                }
+                Clear();
+
+                confirmSection = false;
+
+                WriteLine("Are all of these parameters okay? [Y/N]");
+                confirmAll = ConfirmKeyPress();
+            }//end of outer confirm all loop
+
+            return new Level(playerChar, playerStartingLives, playerForeColor, playerBackColor,
+                            screengrassChar, borderChar, screengrassForeColor, screengrassBackColor, borderForeColor, borderBackColor, width, height, borderWidth,
+                            coinChar, coinForeColor, coinBackColor, numberOfCoins,
+                            numberOfEnemies, enemyChar, enemyForeColor, enemyBackColor,
+                            difficulty, soundLocation);
+        }//end of method
 
         static void NewCustomGame(Level custom, ref bool editorRunning)
         {
@@ -706,6 +1133,7 @@ namespace WaveDodger2
                 custom.Area.UpdateDisplay(1, custom.Player1, custom.Coins);
                 while (KeyAvailable) //Check collision with enemies before moving, get the user's key press and move player based on it
                 {
+                    custom.Player1.CheckCoinCollision(custom.Coins);
                     custom.Player1.HitTest(custom.Enemies, custom.Player1, ref cycleCollision);
                     userKey = ReadKey(true).Key;
                     if (userKey == ConsoleKey.Escape)
@@ -791,7 +1219,7 @@ namespace WaveDodger2
         }
         #endregion
 
-        #region//INPUT VALIDATORS
+        #region//INPUT HANDLING METHODS
         static ConsoleKey TwoKeyChoices()
         {
             ConsoleKey userKey = ConsoleKey.NoName;
@@ -823,6 +1251,15 @@ namespace WaveDodger2
             } while (!isInt | userNumPress < minValue | userNumPress > maxValue);
             return userNumPress;
         }//end of function
+
+        static bool ConfirmKeyPress()
+        {
+            ConsoleKey userKeyPress = ConsoleKey.NoName;
+            while (userKeyPress != ConsoleKey.Y && userKeyPress != ConsoleKey.N)
+                userKeyPress = ReadKey(true).Key;
+
+            return (userKeyPress == ConsoleKey.Y);
+        }
         #endregion 
     }//end of class
 }//end of namespace
