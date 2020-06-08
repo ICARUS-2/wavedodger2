@@ -40,6 +40,7 @@ namespace WaveDodger2
             Coins = Coin.GenerateCoinArray(numberOfCoins_, Rnd, Area, Player1);
             Enemies = Enemy.GetArrayOfEnemies(numberOfEnemies_, Area);
             Difficulty = difficulty_;
+            Music.SoundLocation = DEFAULT_SOUNDLOCATION;
         }
 
         public Level(char playerChar_, int playerStartingLives_, ConsoleColor playerForeColor_, ConsoleColor playerBackColor_, //Advanced editor //Player parameters
