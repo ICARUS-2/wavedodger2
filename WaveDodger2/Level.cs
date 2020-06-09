@@ -7,20 +7,30 @@ using System.Media;
 
 namespace WaveDodger2
 {
+    /// <summary>
+    /// Level.cs defines a level of a console game with players, enemies, coins, a play area, and its own music
+    /// External dependencies: Player class, GameArea class, Coin class, Enemy class.
+    /// </summary>
     class Level
     {
-        private const int DEFAULT_NUMBER_OF_COINS = 5;
-        private const int DEFAULT_NUMBER_OF_ENEMIES = 20;
-        private const int DEFAULT_DIFFICULTY = 250;
+        public const int DEFAULT_NUMBER_OF_COINS = 5;
+        public const int DEFAULT_NUMBER_OF_ENEMIES = 20;
+        public const int DEFAULT_DIFFICULTY = 250;
         public const string DEFAULT_SOUNDLOCATION = @"..\..\sound\l1-love4eva.wav";
-        private SoundPlayer _music = new SoundPlayer(); //Instructions screen: 365 8-bit l1: Love4Eva 8-bit l2:Ddu Du Ddu Du 8-bit  l3: Unravel 8 bit l4: Godzilla 8 bit l5:Black Swan 8-bit
-        private Random _rnd;
-        private Player _player1;
-        private GameArea _area;
-        private Coin[] _coins;
-        private Enemy[] _enemies;
-        private int _difficulty;
+        private SoundPlayer _music = new SoundPlayer(); //The music player for the level.
+        private Random _rnd; //The random number generator used for generating coordinates.
+        private Player _player1; //The player that will be used in the level.
+        private GameArea _area; //The area that the level takes place in graphically.
+        private Coin[] _coins; //The array of coins that are placed around the level’s play area.
+        private Enemy[] _enemies; //The array of enemies that are moving around the screen in waves.
+        private int _difficulty; //The amount of times the game loop needs to run before moving enemies.
 
+        #region//CONSTRUCTORS
+        /// <summary>
+        /// Takes no arguments. Initializes Rnd, Player1, and Area with their default constructors. Coins and 
+        /// Enemies are initialized using their initializer method (GenerateCoinArray, GetArrayOfEnemies) overloads
+        /// that use the default contructor for both objects. Difficulty and Music.SoundLocation are defined using their public constants.
+        /// </summary>
         public Level() //default settings
         {
             Rnd = new Random();
@@ -32,6 +42,18 @@ namespace WaveDodger2
             Music.SoundLocation = DEFAULT_SOUNDLOCATION;
         }
 
+        /// <summary>
+        /// Initializes Rnd and Player1 with their default constructors, initializes Area with its dual-parameter/simple 
+        /// editor constructor (see GameArea.cs). Generates the number of coins and enemies based on the parameters provided 
+        /// (both using their initializer overloads that use default constructors for each object). Difficulty is set using
+        /// the argument provided and Music.SoundLocation is set to its default value. Used only with Simple Editor Mode in the
+        /// Custom Level Editor
+        /// </summary>
+        /// <param name="width_"></param>
+        /// <param name="height_"></param>
+        /// <param name="numberOfCoins_"></param>
+        /// <param name="numberOfEnemies_"></param>
+        /// <param name="difficulty_"></param>
         public Level(int width_, int height_, int numberOfCoins_, int numberOfEnemies_, int difficulty_) //Simple editor
         {
             Rnd = new Random();
@@ -43,6 +65,34 @@ namespace WaveDodger2
             Music.SoundLocation = DEFAULT_SOUNDLOCATION;
         }
 
+        /// <summary>
+        /// Initializes Rnd with its default constructor. Initializes Player1 and Area using their Advanced Editor 
+        /// Constructors. Initializes Coins and Enemies using their initializer overloads that use their advanced editor 
+        /// constructors as well. Difficulty and Music.SoundLocation are set to their provided parameters.
+        /// </summary>
+        /// <param name="playerChar_"></param>
+        /// <param name="playerStartingLives_"></param>
+        /// <param name="playerForeColor_"></param>
+        /// <param name="playerBackColor_"></param>
+        /// <param name="screengrassChar_"></param>
+        /// <param name="borderChar_"></param>
+        /// <param name="screengrassForeColor_"></param>
+        /// <param name="screengrassBackColor_"></param>
+        /// <param name="borderForeColor_"></param>
+        /// <param name="borderBackColor_"></param>
+        /// <param name="width_"></param>
+        /// <param name="height_"></param>
+        /// <param name="borderWidth_"></param>
+        /// <param name="coinChar_"></param>
+        /// <param name="coinForeColor_"></param>
+        /// <param name="coinBackColor_"></param>
+        /// <param name="numberOfCoins"></param>
+        /// <param name="numberOfEnemies_"></param>
+        /// <param name="enemyChar_"></param>
+        /// <param name="enemyForeColor_"></param>
+        /// <param name="enemyBackColor_"></param>
+        /// <param name="difficulty_"></param>
+        /// <param name="soundLocation_"></param>
         public Level(char playerChar_, int playerStartingLives_, ConsoleColor playerForeColor_, ConsoleColor playerBackColor_, //Advanced editor //Player parameters
                     char screengrassChar_, char borderChar_, ConsoleColor screengrassForeColor_, ConsoleColor screengrassBackColor_, ConsoleColor borderForeColor_, ConsoleColor borderBackColor_, int width_, int height_, int borderWidth_, //Game area parameters
                     char coinChar_, ConsoleColor coinForeColor_, ConsoleColor coinBackColor_, int numberOfCoins, //Coin parameters
@@ -57,7 +107,14 @@ namespace WaveDodger2
             Difficulty = difficulty_;
             Music.SoundLocation = soundLocation_;
         }
+        #endregion
 
+        #region//EXTERNAL METHODS
+        /// <summary>
+        /// Takes no arguments, returns an array of Levels based on the parameters provided in the 
+        /// LevelBuilder struct (see LevelBuilder.cs).
+        /// </summary>
+        /// <returns></returns>
         public static Level[] GenerateLevels()
         {
             Level[] levels = new Level[]
@@ -103,9 +160,7 @@ namespace WaveDodger2
 
             return levels;
         }
-            
-        
-
+        #endregion
 
         #region//PROPERTIES
 

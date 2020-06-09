@@ -3,42 +3,54 @@ using static System.Console;
 
 namespace WaveDodger2
 {
+    /// <summary>
+    /// Global Summary: Player class defines a user-controlled player in a console game that 
+    /// can detect collision with enemies and moved using the assigned keyboard buttons
+    /// External Dependencies: Enemy.cs, Coin.cs, GameArea.cs
+    /// </summary>
     class Player
     {
         public const int THREE_LIVES_REMAINING = 3;
         public const int TWO_LIVES_REMAINING = 2;
         public const int ONE_LIFE_REMAINING = 1;
 
-        public const char DEFAULT_PLAYER_CHAR = '0';
+        public const char DEFAULT_PLAYER_CHAR = '0'; //Defines the ASCII character that the player is represented by on screen.
         private char _playerChar;
 
         private const int DEFAULT_SPEED = 1;
         public const int DEFAULT_STARTING_LIVES = 3;
         private const int DEFAULT_X_POS = 2;
         private const int DEFAULT_Y_POS = 2;
-        private int _speed;
-        private int _xPos;
-        private int _yPos;
-        private int _oldXPos;
-        private int _oldYPos;
-        private int _startingLives;
-        private int _livesRemaining;
-        private int _coinsCollected;
+        private int _speed; //Defines the speed in console spaces the player moves at.
+        private int _xPos; //Defines the horizontal position of the player on the screen.
+        private int _yPos; //Defines the vertical position of the player on the screen.
+        private int _oldXPos; //The horizontal position of the player that is recorded before the player moves so the previous player icon can be erased.
+        private int _oldYPos; //The vertical position of the player that is recorded before the player moves so the previous player icon can be erased.
+        private int _startingLives; //The amount of lives that the player starts with.
+        private int _livesRemaining; //The amount of lives that the player has left.
+        private int _coinsCollected; //The amount of coins the player has collected.
 
         public const ConsoleColor DEFAULT_FORE_COLOR = ConsoleColor.Green;
         public const ConsoleColor DEFAULT_BACK_COLOR = ConsoleColor.Magenta;
-        private ConsoleColor _playerForeColor;
-        private ConsoleColor _playerBackColor;
+        private ConsoleColor _playerForeColor; //The foreground color of the ASCII character used to represent the player.
+        private ConsoleColor _playerBackColor; //The background color of the ASCII character used to represent the player.
 
         public const ConsoleKey DEFAULT_KEY_UP = ConsoleKey.W;
         public const ConsoleKey DEFAULT_KEY_DOWN = ConsoleKey.S;
         public const ConsoleKey DEFAULT_KEY_LEFT = ConsoleKey.A;
         public const ConsoleKey DEFAULT_KEY_RIGHT = ConsoleKey.D;
+        //The keys that are used to move the player around on the screen.
         private ConsoleKey _keyUp;
         private ConsoleKey _keyDown;
         private ConsoleKey _keyLeft;
         private ConsoleKey _keyRight;
 
+        #region//CONSTRUCTORS
+        /// <summary>
+        /// Sets PlayerChar, Speed, XPos, YPos, StartingLives, ForeColor, BackColor, KeyUp, KeyDown, KeyLeft, 
+        /// and KeyRight to their default public constants. LivesRemaining is set equal to StartingLives and 
+        /// CoinsCollected is set to 0.
+        /// </summary>
         public Player()
         {
             PlayerChar = DEFAULT_PLAYER_CHAR;
@@ -56,6 +68,15 @@ namespace WaveDodger2
             KeyRight = DEFAULT_KEY_RIGHT;
         }
 
+        /// <summary>
+        /// Speed, XPos, YPos, KeyUp, KeyDown, KeyLeft, and KeyRight are set to their default public constants. 
+        /// PlayerChar, StartingLives, ForeColor and BackColor are set to their respective parameters. LivesRemaining
+        /// is set equal to StartingLives and CoinsCollected is set to 0.
+        /// </summary>
+        /// <param name="playerChar_"></param>
+        /// <param name="startingLives_"></param>
+        /// <param name="playerForeColor_"></param>
+        /// <param name="playerBackColor_"></param>
         public Player(char playerChar_, int startingLives_, ConsoleColor playerForeColor_, ConsoleColor playerBackColor_) //advanced editor
         {
             PlayerChar = playerChar_;
@@ -72,8 +93,16 @@ namespace WaveDodger2
             KeyLeft = DEFAULT_KEY_LEFT;
             KeyRight = DEFAULT_KEY_RIGHT;
         }
+        #endregion
 
         #region//EXTERNAL METHODS
+        /// <summary>
+        /// Takes the user’s key press and the current game area as arguments, and moves the player by its 
+        /// speed in the direction corresponding to the key press. Collision with the outer game area limits 
+        /// is checked here too. Returns void.
+        /// </summary>
+        /// <param name="userKeyPress"></param>
+        /// <param name="area"></param>
         public void Move(ConsoleKey userKeyPress, GameArea area)
         {
             OldXPos = XPos;
@@ -104,6 +133,11 @@ namespace WaveDodger2
             }
         }
 
+        /// <summary>
+        /// Takes the current game area as an argument. Erases the old player icon after moving and 
+        /// draws the new one with its current X and Y positions. Returns void.
+        /// </summary>
+        /// <param name="area"></param>
         public void Draw(GameArea area)
         {
             if (OldXPos != XPos || OldYPos != YPos)
@@ -124,6 +158,9 @@ namespace WaveDodger2
             }
         }
 
+        /// <summary>
+        /// Takes no arguments. Draws the player in its current X and Y pos (no erasing any previous icons). Returns void.
+        /// </summary>
         public void DrawDirectly()
         {
             ForegroundColor = ForeColor;
@@ -133,25 +170,47 @@ namespace WaveDodger2
             ResetColor();
         }
 
+        /// <summary>
+        /// Takes current game area as an argument and uses its dimensions to initialize the player’s 
+        /// position in the center of the play area. Returns void.
+        /// </summary>
+        /// <param name="area"></param>
         public void InitializePosition(GameArea area)
         {
             XPos = (area.BorderWidth * 2 + area.Width) / 2;
             YPos = area.Height / 2;
-            InitializeOnScreen();
+            DrawDirectly();
         }
 
-
+        /// <summary>
+        /// Takes no arguments. Reduces player’s LivesRemaining by 1 and returns void.
+        /// </summary>
         public void LoseLife()
         {
             LivesRemaining--;
         }
 
+        /// <summary>
+        /// Takes no arguments. Resets player’s LivesRemaining back to its StartingLives property and 
+        /// resets its CoinsCollected property back to 0.
+        /// </summary>
         public void ResetStats()
         {
             LivesRemaining = StartingLives;
             CoinsCollected = 0;
         }
 
+        /// <summary>
+        /// Takes an array of enemies, a Player class instance, and a cycleCollision boolean that is used 
+        /// externally to check if the player has had an enemy collision for that run of the game loop. If 
+        /// the player’s lives are greater than 0, draw the player directly (so it doesn’t get hidden by the 
+        /// enemy), and check if the player’s coordinates match those of any enemies in the array. If so, the 
+        /// player loses a life (see LoseLife()). Returns void as collision check is done internally with a 
+        /// reference boolean (see CheckEnemyCollision(Enemy[] enemies)).
+        /// </summary>
+        /// <param name="enemies"></param>
+        /// <param name="player"></param>
+        /// <param name="cycleCollision"></param>
         public void HitTest(Enemy[] enemies, Player player, ref bool cycleCollision)
         {
             if (player.LivesRemaining > 0)
@@ -164,19 +223,12 @@ namespace WaveDodger2
             }
         }
 
-        public bool CheckEnemyCollision(Enemy[] enemies)
-        {
-            foreach (Enemy e in enemies)
-            {
-                if ((XPos == e.EnemyXPos && YPos == e.EnemyYPos))
-                {
-                    Beep();
-                    return true;
-                }
-            }
-            return false;
-        }
-
+        /// <summary>
+        /// Checks if the player’s position matches that of any coins in the game. If so, that coin’s 
+        /// Collect method is called (see Coin.Collect(Player player)). Returns void as coin stat modification 
+        /// is done internally through the Coin.Collect(Player player) method.
+        /// </summary>
+        /// <param name="coins"></param>
         public void CheckCoinCollision(Coin[] coins)
         {
             for (int i = 0; i < coins.Length; i++)
@@ -189,15 +241,24 @@ namespace WaveDodger2
         #endregion
 
         #region//INTERNAL METHODS
-        private void InitializeOnScreen()
+        /// <summary>
+        /// Takes an enemy array as an argument, and checks to see if the player’s position matches that of any
+        /// enemies. If so, console beeps and returns true. If not, returns false.
+        /// </summary>
+        /// <param name="enemies"></param>
+        /// <returns></returns>
+        private bool CheckEnemyCollision(Enemy[] enemies)
         {
-            SetCursorPosition(XPos, YPos);
-            ForegroundColor = ForeColor;
-            BackgroundColor = BackColor;
-            Write(PlayerChar);
-            ResetColor();
+            foreach (Enemy e in enemies)
+            {
+                if ((XPos == e.EnemyXPos && YPos == e.EnemyYPos))
+                {
+                    Beep();
+                    return true;
+                }
+            }
+            return false;
         }
-
         #endregion
 
         #region//PROPERTIES
@@ -312,6 +373,9 @@ namespace WaveDodger2
             }
             set
             {
+                if (LivesRemaining < 0)
+                    throw new ArgumentException("PLAYER CANNOT HAVE NEGATIVE LIVES REMAINING","_livesRemaining");
+
                 _livesRemaining = value;
             }
         }

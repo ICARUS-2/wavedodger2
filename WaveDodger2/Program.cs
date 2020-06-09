@@ -10,30 +10,37 @@ using System.Threading;
 using System.Media;
 namespace WaveDodger2
 {
+    /// <summary>
+    /// Global Summary: Provides and calls all of the methods needed to run a game where 
+    /// the user controls a character and dodges waves of enemies. The user can make their 
+    /// own levels and play them using a dual-mode level editor.
+    /// External Dependencies: Coin.cs, Enemy,cs, GameArea.cs, Level.cs, LevelBuilder.cs, Player.cs
+    /// </summary>
     class Program
     {
         #region//GLOBAL CONSTANTS
-        const ConsoleKey HOW_TO_PLAY = ConsoleKey.D0;
-        const ConsoleKey NEW_GAME = ConsoleKey.D1;
-        const ConsoleKey CURRENT_ROUND = ConsoleKey.D2;
-        const ConsoleKey EDITOR_MODE = ConsoleKey.D3;
-        const ConsoleKey EXIT_TO_DESKTOP = ConsoleKey.D4;
+        const ConsoleKey HOW_TO_PLAY = ConsoleKey.D0; //The input that calls the Instructions() method on the title screen.
+        const ConsoleKey NEW_GAME = ConsoleKey.D1; //The input that allows the NewGame() method to be called from the first round of the game.
+        const ConsoleKey CURRENT_ROUND = ConsoleKey.D2; //The input that allows the NewGame() method to be called from the round the user last exited from.
+        const ConsoleKey EDITOR_MODE = ConsoleKey.D3; //The input that calls the LevelEditorMode() method directly from the title screen.
+        const ConsoleKey EXIT_TO_DESKTOP = ConsoleKey.D4;//The input that calls the Environment.Exit() method directly from the title screen.
 
-        const ConsoleKey SIMPLE_EDITOR = ConsoleKey.D1;
-        const ConsoleKey ADVANCED_EDITOR = ConsoleKey.D2;
-        const ConsoleKey EXIT_EDITOR = ConsoleKey.D3;
+        const ConsoleKey SIMPLE_EDITOR = ConsoleKey.D1; //The input that calls the SimpleEditor() method from the GetEditorMode() method.
+        const ConsoleKey ADVANCED_EDITOR = ConsoleKey.D2; //The input that calls the AdvancedEditor() method from the GetEditorMode() method.
+        const ConsoleKey EXIT_EDITOR = ConsoleKey.D3; //The input that calls the “return” keyword from the GetEditorMode() method.
 
-        const ConsoleKey CHOICE_1 = ConsoleKey.D1;
+        const ConsoleKey CHOICE_1 = ConsoleKey.D1; //The inputs corresponding to the two choices in the TwoKeyChoices() validator method.
         const ConsoleKey CHOICE_2 = ConsoleKey.D2;
 
-        const ConsoleKey PAUSE_RESTART = ConsoleKey.D1;
-        const ConsoleKey PAUSE_QUIT_TO_MENU = ConsoleKey.D2;
-        const ConsoleKey PAUSE_QUIT_TO_DESKTOP = ConsoleKey.D3;
+        const ConsoleKey PAUSE_RESTART = ConsoleKey.D1; //The input that allows the current round to be restarted from the Pause() method.
+        const ConsoleKey PAUSE_QUIT_TO_MENU = ConsoleKey.D2; //The input that ends the current round and returns to the main menu from the Pause() method.
+        const ConsoleKey PAUSE_QUIT_TO_DESKTOP = ConsoleKey.D3; //The input that calls the Environment.Exit() method from the Pause() method.
 
-        const ConsoleKey WINSCREEN_EXIT = ConsoleKey.Enter;
+        const ConsoleKey WINSCREEN_EXIT = ConsoleKey.Enter; //The input that terminates the win screen and returns the user to the main menu.
 
-        const ConsoleColor EDITOR_COLOR = ConsoleColor.Cyan;
+        const ConsoleColor EDITOR_COLOR = ConsoleColor.Cyan; //The color that the top text appears in when the user is editing their level.
 
+        //The limits imposed on the level editor (see Program.cs)
         const int EDITOR_MIN_WIDTH = 20;
         const int EDITOR_MAX_WIDTH = 150;
         const int EDITOR_MIN_HEIGHT = 15;
@@ -44,13 +51,21 @@ namespace WaveDodger2
         const int EDITOR_MAX_COINS = 50;
         const int EDITOR_MIN_ENEMIES = 1;
         const int EDITOR_MAX_ENEMIES = 200;
-        const int EDITOR_MIN_DIFFICULTY = 100;
+        const int EDITOR_MIN_DIFFICULTY = 1;
         const int EDITOR_MAX_DIFFICULTY = 4000;
         const int HEIGHT_OFFSET = 3;
         #endregion
 
+        const string RELEASE_VERSION = "1.0";
+
         [DllImport("user32.dll")]
         public static extern bool ShowWindow(System.IntPtr hWnd, int cmdShow);
+
+        /// <summary>
+        /// Starts the program, gets the levels that will be generated, and runs the main game loops. Returns void.
+        /// Try/Catch implemented (see DisplayCrashInfo(Exception ex)).
+        /// </summary>
+        /// <param name="args"></param>
         static void Main(string[] args)
         {
             try
@@ -78,6 +93,9 @@ namespace WaveDodger2
         }
 
         #region//OUTSIDE GAME METHODS
+        /// <summary>
+        /// Takes no arguments, maximizes the console window size to fit the size of the screen the user is using, and returns void.
+        /// </summary>
         private static void Maximize()
         {
             //Sourced from https://stackoverflow.com/questions/22053112/maximizing-console-window-c-sharp/22053200
@@ -85,6 +103,13 @@ namespace WaveDodger2
             ShowWindow(p.MainWindowHandle, 3); //SW_MAXIMIZE = 3
         }
 
+        /// <summary>
+        /// Takes two parameters, a ref int corresponding to the INDEX of the current level in the levels array, 
+        /// and a ref bool determining whether the program is currently running a game. Displays the title, the options,
+        /// and the credits, and returns void
+        /// </summary>
+        /// <param name="currentLevelIndex"></param>
+        /// <param name="gameInProgress"></param>
         static void TitleScreen(ref int currentLevelIndex, ref bool gameInProgress)
         {
             SoundPlayer titleMusic = new SoundPlayer();
@@ -168,6 +193,12 @@ namespace WaveDodger2
 
                 SetCursorPosition(menuX, menuY + 16);
                 WriteLine("Soundtrack by Darnu-Pop, Studio Megaane, 8 Bit Universe, JHN Studio, Nintendo");
+
+                SetCursorPosition(menuX, menuY + 18);
+
+                ForegroundColor = ConsoleColor.Magenta;
+                WriteLine("Release version {0}", RELEASE_VERSION);
+
                 while (KeyAvailable)
                 {
                     userKey = ReadKey(true).Key;
@@ -201,6 +232,12 @@ namespace WaveDodger2
             Clear();
         }
 
+        /// <summary>
+        /// Takes two integers corresponding to the X and Y positions of the instructions. 
+        /// Tells the user how to play the game and returns void.
+        /// </summary>
+        /// <param name="menuX"></param>
+        /// <param name="menuY"></param>
         static void Instructions(int menuX, int menuY)
         {
             CursorVisible = false;
@@ -246,6 +283,11 @@ namespace WaveDodger2
             Clear();
         }
 
+        /// <summary>
+        /// Takes an Exception and displays in red the stack trace of the Exception as well as its 
+        /// corresponding ex.Message. Returns void.
+        /// </summary>
+        /// <param name="ex"></param>
         static void DisplayCrashInfo(Exception ex)
         {
             ResetColor();
@@ -262,6 +304,13 @@ namespace WaveDodger2
 
         #region//MAIN GAME METHODS
 
+        /// <summary>
+        /// Takes two integers, the first corresponding to the current INDEX in the levels array, 
+        /// and the second corresponding to the number of levels in the game. Clears the console screen
+        /// and displays a countdown to the next level with a beep after each second in the countdown. Returns void
+        /// </summary>
+        /// <param name="currentLevelIndex"></param>
+        /// <param name="numberOfLevels"></param>
         static void MoveToNextRoundScreen(int currentLevelIndex, int numberOfLevels)
         {
             int delay = 1000;
@@ -288,6 +337,9 @@ namespace WaveDodger2
             }//end of if statement
         }
 
+        /// <summary>
+        /// Takes no arguments, displays a victory message and returns void when the user presses the WINSCREEN_EXIT key (see Global Constants Section).
+        /// </summary>
         static void WinScreen()
         {
             SoundPlayer victoryMusic = new SoundPlayer();
@@ -353,7 +405,7 @@ namespace WaveDodger2
                 }
                 ForegroundColor = ConsoleColor.White;
                 SetCursorPosition(menuX, menuY);
-                WriteLine(" Press enter to return to return to main menu");
+                WriteLine("  Press enter to return to main menu");
                 while (KeyAvailable)
                 {
                     userKey = ReadKey(true).Key;
@@ -365,6 +417,13 @@ namespace WaveDodger2
             Clear();
         }
 
+        /// <summary>
+        /// Takes a ref bool corresponding to whether the game should be running after the method ends. 
+        /// Lets the user know they have died and gives them the choice to restart the current round, exit 
+        /// to menu, or exit to desktop. Returns void as the game’s state is controlled by the reference bool
+        /// gameInProgress and not by a return value at this point.
+        /// </summary>
+        /// <param name="gameInProgress"></param>
         static void DeathScreen(ref bool gameInProgress)
         {
             int menuYPos = 20;
@@ -436,6 +495,13 @@ namespace WaveDodger2
             Clear();
         }
 
+        /// <summary>
+        /// Takes the current game area as an argument, and uses its dimensions to display a centered pause
+        /// message at the bottom of the play area. Gives the user the choice between restarting the current round,
+        /// qutting to menu, or quitting to desktop. Returns a ConsoleKey based on the choice the user makes.
+        /// </summary>
+        /// <param name="area"></param>
+        /// <returns></returns>
         static ConsoleKey Pause(GameArea area)
         {
             ConsoleKey menuKeyPress;
@@ -480,6 +546,11 @@ namespace WaveDodger2
             return menuKeyPress;
         }
 
+        /// <summary>
+        /// Takes the current Level class instance as an argument and renders the play area, the coins, 
+        /// the player and the enemies. Begins playing the level’s specific music as well. Returns void.
+        /// </summary>
+        /// <param name="current"></param>
         static void PrepareLevel(Level current)
         {
             current.Area.Render();
@@ -490,6 +561,18 @@ namespace WaveDodger2
             current.Music.PlayLooping();
         }
 
+        /// <summary>
+        /// Takes the current Level class instance, the index of the current level in the levels array, 
+        /// the total number of levels (levels.Length) and the gameInProgress bool which is used to stop or start
+        /// the game wherever necessary. Contains the main game loop which calls all of the methods necessary to 
+        /// get inputs, move the characters, and draw what is happening on screen. Also calls the methods that check
+        /// collision. When the game loop is broken out of, it then checks to see if it was because the player won or
+        /// lost and displays the correct screens based on this. Returns void.
+        /// </summary>
+        /// <param name="current"></param>
+        /// <param name="currentLevelIndex"></param>
+        /// <param name="numberOfLevels"></param>
+        /// <param name="gameInProgress"></param>
         static void NewGame(Level current, ref int currentLevelIndex, int numberOfLevels, ref bool gameInProgress)
         {
             bool cycleCollision;
@@ -583,8 +666,88 @@ namespace WaveDodger2
 
         #endregion
 
-        #region//LEVEL EDITOR METHODS
+        #region//LEVEL EDITOR METHODS AND FIELDS
 
+        /// <summary>
+        ///  Uses an integer inputted by the user in order to locate the correct file path (string) of the
+        ///  level soundtrack the user wishes to play in the level that they are designing.
+        /// </summary>
+        public static readonly Dictionary<int, string> editorSoundtracks = new Dictionary<int, string>()
+        {
+            {1, @"../../sound/l0-365.wav"},
+            {2, @"../../sound/l1-love4eva.wav"},
+            {3, @"../../sound/l2-ddu.wav"},
+            {4, @"../../sound/l3-unravel.wav"},
+            {5, @"../../sound/l4-godzilla.wav"},
+            {6, @"../../sound/l5-blackswan.wav"},
+            {7, @"../../sound/wd1-hihigh.wav"},
+            {8, @"../../sound/nosound.wav"}
+        };
+
+        /// <summary>
+        /// Uses an integer inputted by the user in order to return a ConsoleColor used to control the colors of 
+        /// the level elements when the user is designing their level.
+        /// </summary>
+        public static readonly Dictionary<int, ConsoleColor> colors = new Dictionary<int, ConsoleColor>()
+        {
+            {1, ConsoleColor.White},
+            {2, ConsoleColor.Gray},
+            {3, ConsoleColor.DarkGray},
+            {4, ConsoleColor.Black},
+            {5, ConsoleColor.DarkRed},
+            {6, ConsoleColor.Red},
+            {7, ConsoleColor.DarkYellow},
+            {8, ConsoleColor.Yellow},
+            {9, ConsoleColor.Green},
+            {10, ConsoleColor.DarkGreen},
+            {11, ConsoleColor.DarkBlue},
+            {12, ConsoleColor.Blue},
+            {13, ConsoleColor.Cyan},
+            {14, ConsoleColor.DarkCyan},
+            {15, ConsoleColor.DarkMagenta},
+            {16, ConsoleColor.Magenta},
+        };
+
+        /// <summary>
+        /// Takes no arguments, loops through the colors dictionary displaying the numbers and their corresponding
+        /// ConsoleColor values in their respective colors. Black will have a background color of white so it is 
+        /// visible to the user on the black console. Returns void
+        /// </summary>
+        static void DisplayColors()
+        {
+            for (int i = 1; i < colors.Count + 1; i++)
+            {
+                ForegroundColor = colors[i];
+                if (colors[i] == ConsoleColor.Black)
+                    BackgroundColor = ConsoleColor.White;
+
+                WriteLine("{0} - {1}", i, colors[i]);
+                ResetColor();
+            }
+            ResetColor();
+        }
+
+        /// <summary>
+        /// Takes no arguments. Displays the soundtrack options that are NOT directly linked to the editorSoundtracks 
+        /// dictionary itself (see editorSoundtracks). Returns void
+        /// </summary>
+        static void DisplaySoundtrack()
+        {
+            WriteLine("1 - Title theme");
+            WriteLine("2 - Level 1 theme");
+            WriteLine("3 - Level 2 theme");
+            WriteLine("4 - Level 3 theme");
+            WriteLine("5 - Level 4 theme");
+            WriteLine("6 - Level 5 theme");
+            WriteLine("7 - WaveDodger I theme");
+            WriteLine("8 - No music");
+        }
+
+        /// <summary>
+        /// Takes no arguments, calls the correct editor mode based on the user’s choice (see Program.GetEditorMode()).
+        /// Runs a game level based entirely on the parameters defined by the user (see Program.NewCustomGame(custom, ref editorRunning)).
+        /// Returns void.
+        /// </summary>
         static void LevelEditorMode()
         {
             bool exitEditor = false;
@@ -617,6 +780,11 @@ namespace WaveDodger2
             }
         }
 
+        /// <summary>
+        /// Takes no arguments. Clears the console and displays the menu with the two editor modes and the option to exit to main menu.
+        /// Gets the user’s input and if it corresponds to one of the menu options it will return the ConsoleKey that the user pressed.
+        /// </summary>
+        /// <returns></returns>
         static ConsoleKey GetEditorMode()
         {
             Clear();
@@ -624,8 +792,8 @@ namespace WaveDodger2
             WriteLine("===============LEVEL EDITOR===============");
             ForegroundColor = ConsoleColor.White;
             WriteLine("\nSELECT EDITOR MODE:");
-            WriteLine("\n1 - SIMPLE EDITOR");
-            WriteLine("\n2 - ADVANCED EDITOR");
+            WriteLine("\n1 - SIMPLE EDITOR - Control the basic parts of your own level: Play area width/height, number of enemies/coins, and difficulty setting");
+            WriteLine("\n2 - ADVANCED EDITOR - Full control over every single aspect of your own level, from player cosmetics to game music");
             WriteLine("\n3 - EXIT TO MENU");
             ConsoleKey userKey = ConsoleKey.NoName;
             bool validKey = false;
@@ -641,6 +809,12 @@ namespace WaveDodger2
             return userKey;
         }
 
+        /// <summary>
+        /// Takes no arguments. Allows user to design their own level with basic control over the level’s width/height, 
+        /// number of coins/enemies, and the difficulty setting. Returns a new Level using the Simple Editor Constructor 
+        /// (see Level.cs) based on these parameters inputted by the user.
+        /// </summary>
+        /// <returns></returns>
         static Level SimpleEditor()
         {
             int width;
@@ -694,64 +868,13 @@ namespace WaveDodger2
             return new Level(width, height, numberOfCoins, numberOfEnemies, difficulty);
         }
 
-        public static readonly Dictionary<int, string> editorSoundtracks = new Dictionary<int, string>()
-        {
-            {1, @"../../sound/l0-365.wav"},
-            {2, @"../../sound/l1-love4eva.wav"},
-            {3, @"../../sound/l2-ddu.wav"},
-            {4, @"../../sound/l3-unravel.wav"},
-            {5, @"../../sound/l4-godzilla.wav"},
-            {6, @"../../sound/l5-blackswan.wav"},
-            {7, @"../../sound/wd1-hihigh.wav"},
-            {8, @"../../sound/nosound.wav"}
-        };
-
-        public static readonly Dictionary<int, ConsoleColor> colors = new Dictionary<int, ConsoleColor>()
-        {
-            {1, ConsoleColor.White},
-            {2, ConsoleColor.Gray},
-            {3, ConsoleColor.DarkGray},
-            {4, ConsoleColor.Black},
-            {5, ConsoleColor.DarkRed},
-            {6, ConsoleColor.Red},
-            {7, ConsoleColor.DarkYellow},
-            {8, ConsoleColor.Yellow},
-            {9, ConsoleColor.Green},
-            {10, ConsoleColor.DarkGreen},
-            {11, ConsoleColor.DarkBlue},
-            {12, ConsoleColor.Blue},
-            {13, ConsoleColor.Cyan},
-            {14, ConsoleColor.DarkCyan},
-            {15, ConsoleColor.DarkMagenta},
-            {16, ConsoleColor.Magenta},
-        };
-
-        static void DisplayColors()
-        {
-            for (int i = 1; i < colors.Count + 1; i++)
-            {
-                ForegroundColor = colors[i];
-                if (colors[i] == ConsoleColor.Black)
-                    BackgroundColor = ConsoleColor.White;
-
-                WriteLine("{0} - {1}", i, colors[i]);
-                ResetColor();
-            }
-            ResetColor();
-        }
-
-        static void DisplaySoundtrack()
-        {
-            WriteLine("1 - Title theme");
-            WriteLine("2 - Level 1 theme");
-            WriteLine("3 - Level 2 theme");
-            WriteLine("4 - Level 3 theme");
-            WriteLine("5 - Level 4 theme");
-            WriteLine("6 - Level 5 theme");
-            WriteLine("7 - WaveDodger I theme");
-            WriteLine("8 - No music");
-        }
-
+        /// <summary>
+        /// Takes no arguments. Allows user to design their own level with full control over every aspect of the level 
+        /// including the characters and colors used to build the level, enemies, and players, full control over the level 
+        /// size, and everything mentioned in the SimpleEditor(). Returns a new Level() using the Advanced Editor Constructor
+        /// based on these parameters inputted by the user.
+        /// </summary>
+        /// <returns></returns>
         static Level AdvancedEditor()
         {
             //player parameters
@@ -1109,6 +1232,13 @@ namespace WaveDodger2
                             difficulty, soundLocation);
         }//end of method
 
+        /// <summary>
+        /// Takes the custom level created by the user (see SimpleEditor(), AdvancedEditor()), and the reference boolean 
+        /// determining whether the game is running or not. Does the same thing as the NewGame() method, except has no form
+        /// of level progression system as the user is creating only one level. Returns void.
+        /// </summary>
+        /// <param name="custom"></param>
+        /// <param name="editorRunning"></param>
         static void NewCustomGame(Level custom, ref bool editorRunning)
         {
             bool cycleCollision;
@@ -1194,6 +1324,13 @@ namespace WaveDodger2
             Coin.Reset(custom.Coins);
         }
 
+        /// <summary>
+        /// Takes the custom level’s game area and uses it to display a centered menu underneath it, giving the user the 
+        /// option to restart the current level or to return to editor menu. Gets user key based on the menu options 
+        /// (see TwoKeyChoices()) Returns true if the user wishes to restart or false if the user wishes to return to the menu.
+        /// </summary>
+        /// <param name="area"></param>
+        /// <returns></returns>
         static bool EditorWinOption(GameArea area)
         {
             Clear();
@@ -1207,18 +1344,17 @@ namespace WaveDodger2
             WriteLine(message2);
             WriteLine(message3);
 
-            while (!validKey)
-            {
-                userKey = ReadKey(true).Key;
-
-                if (userKey == CHOICE_1 || userKey == CHOICE_2)
-                    validKey = true;
-            }
+            userKey = TwoKeyChoices();
 
             return (userKey == CHOICE_1);
         }
         #endregion
 
+        /// <summary>
+        /// Takes no arguments. Method will keep reading the user’s key until one of two valid keys are pressed 
+        /// (see Global Constants Section, CHOICE_1/CHOICE_2). Returns the ConsoleKey the user pressed.
+        /// </summary>
+        /// <returns></returns>
         #region//INPUT HANDLING METHODS
         static ConsoleKey TwoKeyChoices()
         {
@@ -1235,6 +1371,16 @@ namespace WaveDodger2
             return userKey;
         }
 
+        /// <summary>
+        /// USED FROM MY OWN LIBRARY. Takes three parameters: Two integers defining the minimum and maximum value
+        /// that will be used to validate the user’s input, and the error message it will display if the user enters 
+        /// an invalid input. Reads the user’s input, if it is a valid int within the min and max value, it will return
+        /// that int. Otherwise it displays the error message.
+        /// </summary>
+        /// <param name="minValue"></param>
+        /// <param name="maxValue"></param>
+        /// <param name="errorMessage"></param>
+        /// <returns></returns>
         static int ValInt(int minValue, int maxValue, string errorMessage)
         {
             bool isInt;
@@ -1252,6 +1398,11 @@ namespace WaveDodger2
             return userNumPress;
         }//end of function
 
+        /// <summary>
+        /// Takes no arguments, keeps reading the user’s key presses until the user enters Y (for yes) or N (for no).
+        /// Returns true if user inputted Y or false if user inputted N.
+        /// </summary>
+        /// <returns></returns>
         static bool ConfirmKeyPress()
         {
             ConsoleKey userKeyPress = ConsoleKey.NoName;

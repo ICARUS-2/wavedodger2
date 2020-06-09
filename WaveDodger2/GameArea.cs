@@ -9,6 +9,11 @@ using System.Runtime.InteropServices;
 
 namespace WaveDodger2
 {
+    /// <summary>
+    /// GameArea class defines a working play area for a console game, complete with
+    /// limit calculations and full cosmetic and dimensional customizability
+    /// External Dependencies: Player.cs, Coin.cs
+    /// </summary>
     class GameArea
     {
         public const char DEFAULT_SCREENGRASS_CHAR = '.';
@@ -43,7 +48,12 @@ namespace WaveDodger2
         private int _leftLimit; //lowest possible x coord the player can hit
         private int _rightLimit; //highest possible x coord the player can hit
 
-
+        #region//CONSTRUCTORS
+        /// <summary>
+        /// ScreengrassChar, BorderChar, ScreengrassForeColor, ScreengrassBackColor, BorderForeColor, 
+        /// BorderBackColor, Width, Height, BorderWidth, MoreLivesRemainingColor, TwoLivesRemainingColor, 
+        /// OneLifeRemainingColor are all set to their public constant defaults. Limits are calculated (see CalculateLimits()).
+        /// </summary>
         public GameArea() //default settings
         {
             ScreengrassChar = DEFAULT_SCREENGRASS_CHAR;
@@ -61,6 +71,13 @@ namespace WaveDodger2
             CalculateLimits();
         }
 
+        /// <summary>
+        /// ScreengrassChar, BorderChar, ScreengrassForeColor, ScreengrassBackColor, BorderForeColor, BorderBackColor, 
+        /// BorderWidth, MoreLivesRemainingColor, TwoLivesRemainingColor, OneLifeRemainingColor are all set to their public 
+        /// constant defaults. Width and Height are set to their respective parameters. Limits are calculated (see CalculateLimits()).
+        /// </summary>
+        /// <param name="width_"></param>
+        /// <param name="height_"></param>
         public GameArea(int width_, int height_) //simple editor
         {
             ScreengrassChar = DEFAULT_SCREENGRASS_CHAR;
@@ -77,7 +94,21 @@ namespace WaveDodger2
             OneLifeRemainingColor = DEFAULT_ONE_LIFE_REMAINING_COLOR;
             CalculateLimits();
         }
-        
+
+        /// <summary>
+        ///  ScreengrassChar, BorderChar, ScreengrassForeColor, ScreengrassBackColor, BorderForeColor, BorderBackColor, Width, 
+        ///  Height, BorderWidth are all set to their respective parameter values. MoreLivesRemainingColor, TwoLivesRemainingColor, 
+        ///  OneLifeRemainingColor are all set to their public constant defaults. Limits are calculated (see CalculateLimits()).
+        /// </summary>
+        /// <param name="screengrassChar_"></param>
+        /// <param name="borderChar_"></param>
+        /// <param name="screengrassForeColor_"></param>
+        /// <param name="screengrassBackColor_"></param>
+        /// <param name="borderForeColor_"></param>
+        /// <param name="borderBackColor_"></param>
+        /// <param name="width_"></param>
+        /// <param name="height_"></param>
+        /// <param name="borderWidth_"></param>
         public GameArea(char screengrassChar_, char borderChar_, ConsoleColor screengrassForeColor_, ConsoleColor screengrassBackColor_, ConsoleColor borderForeColor_, ConsoleColor borderBackColor_, int width_, int height_, int borderWidth_) //advanced editor
         {
             ScreengrassChar = screengrassChar_;
@@ -94,15 +125,13 @@ namespace WaveDodger2
             OneLifeRemainingColor = DEFAULT_ONE_LIFE_REMAINING_COLOR;
             CalculateLimits();
         }
+        #endregion
 
-        private void CalculateLimits()
-        {
-            UpLimit = 1;
-            DownLimit = Height - 2;
-            LeftLimit = BorderWidth;
-            RightLimit = BorderWidth + Width - 1;
-        }
+        #region//EXTERNAL METHODS
 
+        /// <summary>
+        /// Takes no arguments. Draws the play area in the console based on its dimensions, characters and colors. Returns void.
+        /// </summary>
         public void Render()
         {
             SetCursorPosition(0, 0);
@@ -164,6 +193,15 @@ namespace WaveDodger2
             ResetColor();
         }
 
+        /// <summary>
+        /// Takes the index of the current level in the levels array (see Program.cs.levels), an instance of the player 
+        /// object and an array of coins, and uses it to display the current round, number of coins collected, total number
+        /// of coins, and the player’s lives remaining. Changes colors based on how many lives the Player instance’s backing 
+        /// field has (see LIVES_REMAINING ConsoleColors). Returns void.
+        /// </summary>
+        /// <param name="currentLevelIndex"></param>
+        /// <param name="player"></param>
+        /// <param name="coins"></param>
         public void UpdateDisplay(int currentLevelIndex, Player player, Coin[] coins)
         {
             if (player.LivesRemaining >= Player.THREE_LIVES_REMAINING)
@@ -196,7 +234,24 @@ namespace WaveDodger2
 
             ResetColor();
         }
-        
+
+        #endregion
+
+        #region//INTERNAL METHODS
+        /// <summary>
+        /// Takes no arguments. Sets the UpLimit, DownLimit, LeftLimit, and RightLimit properties based on the dimensions
+        /// of the Game Area itself, ensuring the player cannot clip outside of the game area itself. Returns void.
+        /// </summary>
+        private void CalculateLimits()
+        {
+            UpLimit = 1;
+            DownLimit = Height - 2;
+            LeftLimit = BorderWidth;
+            RightLimit = BorderWidth + Width - 1;
+        }
+
+        #endregion
+
         #region//PROPERTIES
         public char ScreengrassChar
         {

@@ -3,22 +3,26 @@ using static System.Console;
 
 namespace WaveDodger2
 {
+    /// <summary>
+    /// Enemy class defines an enemy in a console game that moves from side to side of the play area randomly.
+    /// External Dependencies: Player.cs, Coin.cs, GameArea.cs
+    /// </summary>
     class Enemy
     {
-        private int _enemyXPos;
-        private int _enemyYPos;
+        private int _enemyXPos; //The horizontal position of the enemy on screen.
+        private int _enemyYPos; //The vertical position of the enemy on screen.
 
         private const Sides DEFAULT_EMERGING_SIDE = Sides.Top;
-        private Sides _emergingSide;
+        private Sides _emergingSide; //The side that the wave of the enemies will come out from.
 
         public const char DEFAULT_ENEMY_CHAR = 'X';
-        private char _enemyChar;
+        private char _enemyChar; //The ASCII character that represents the enemy.
 
         public const ConsoleColor DEFAULT_ENEMY_FORECOLOR = ConsoleColor.DarkRed;
         public const ConsoleColor DEFAULT_ENEMY_BACKCOLOR = ConsoleColor.Black;
-        private ConsoleColor _enemyForeColor;
-        private ConsoleColor _enemyBackChar;
-        public enum Sides
+        private ConsoleColor _enemyForeColor; //The foreground color of the character representing the enemy.
+        private ConsoleColor _enemyBackChar; //The background color of the character representing the enemy.
+        public enum Sides //Makes it easier to set the emerging side of the enemy wave.
         {
             Top = 1,
             Right = 2,
@@ -26,6 +30,11 @@ namespace WaveDodger2
             Left = 4,
         }
 
+        #region//CONSTRUCTORS
+        /// <summary>
+        /// Sets EnemyXPos and EnemyYPos to zero, and sets the EmergingSide, EnemyChar, EnemyForeColor
+        /// and EnemyBackColor to their public constant defaults.
+        /// </summary>
         public Enemy() //default
         {
             EnemyXPos = 0;
@@ -36,6 +45,13 @@ namespace WaveDodger2
             EnemyBackColor = DEFAULT_ENEMY_BACKCOLOR;
         }
 
+        /// <summary>
+        /// Sets EnemyXPos and EnemyYPos to zero, sets the EmergingSide to its default value, and sets the 
+        /// EnemyChar, EnemyForeColor and EnemyBackColor to their respective parameters.
+        /// </summary>
+        /// <param name="enemyChar_"></param>
+        /// <param name="enemyForeColor_"></param>
+        /// <param name="enemyBackColor_"></param>
         public Enemy(char enemyChar_, ConsoleColor enemyForeColor_, ConsoleColor enemyBackColor_) //advanced editor
         {
             EnemyXPos = 0;
@@ -45,8 +61,16 @@ namespace WaveDodger2
             EnemyForeColor = enemyForeColor_;
             EnemyBackColor = enemyBackColor_;
         }
+        #endregion
 
         #region//EXTERNAL METHODS
+        /// <summary>
+        /// Overload takes an integer representing the amount of enemies to be generated and the GameArea they will be used on. Creates a new Enemy 
+        /// array and initializes each element with its default constructor. Returns the array.
+        /// </summary>
+        /// <param name="numberOfEnemies"></param>
+        /// <param name="area"></param>
+        /// <returns></returns>
         public static Enemy[] GetArrayOfEnemies(int numberOfEnemies, GameArea area)
         {
             Enemy[] enemies = new Enemy[numberOfEnemies];
@@ -59,23 +83,41 @@ namespace WaveDodger2
             return enemies;
         }
 
-        public static Enemy[] GetArrayOfEnemies(int numberOfEnemies, GameArea area, char enemyChar_, ConsoleColor enemyForeColor_, ConsoleColor enemyBackColor_)
+        /// <summary>
+        /// Overload takes an integer representing the amount of enemies to be generated, the game area, an enemy character, and enemy 
+        /// foreground/background colors. Creates a new Enemy array and initializes each element with its Advanced Editor Constructor. 
+        /// Returns the array.
+        /// </summary>
+        /// <param name="numberOfEnemies"></param>
+        /// <param name="area"></param>
+        /// <param name="enemyChar"></param>
+        /// <param name="enemyForeColor"></param>
+        /// <param name="enemyBackColor"></param>
+        /// <returns></returns>
+        public static Enemy[] GetArrayOfEnemies(int numberOfEnemies, GameArea area, char enemyChar, ConsoleColor enemyForeColor, ConsoleColor enemyBackColor)
         {
             Enemy[] enemies = new Enemy[numberOfEnemies];
 
             for (int i = 0; i < enemies.Length; i++)
             {
-                enemies[i] = new Enemy(enemyChar_, enemyForeColor_, enemyBackColor_);
+                enemies[i] = new Enemy(enemyChar, enemyForeColor, enemyBackColor);
             }
 
             return enemies;
         }
 
+        /// <summary>
+        /// Takes an array of enemies, a game area and a Random class instance as arguments, and changes the emerging side of the
+        /// enemies once its wave is complete by setting its initial position to a randomly generated side. Returns void.
+        /// </summary>
+        /// <param name="enemies"></param>
+        /// <param name="area"></param>
+        /// <param name="rnd"></param>
         public static void ChangeSide(Enemy[] enemies, GameArea area, Random rnd)
         {
-            //Random rnd = new Random();
+
             enemies[0].EmergingSide = (Sides)rnd.Next((int)Sides.Top, (int)Sides.Left + 1); //Generates a number from 1-4 representing the side the enemies will scroll across the screen from
-            //enemies[0].EmergingSide = Sides.Left;
+
             for (int i = 0; i < enemies.Length; i++)
             {
                 switch (enemies[0].EmergingSide)
@@ -103,8 +145,13 @@ namespace WaveDodger2
             }
         }
 
-
-
+        /// <summary>
+        /// Takes an array of enemies, a game area and a Random class instance as arguments, and moves the enemies’ coordinates 
+        /// depending on their EmergingSide. Returns void.
+        /// </summary>
+        /// <param name="enemies"></param>
+        /// <param name="area"></param>
+        /// <param name="rnd"></param>
         public static void MoveEnemies(Enemy[] enemies, GameArea area, Random rnd)
         {
             if (CheckIfAtEnd(enemies, area))
@@ -139,6 +186,16 @@ namespace WaveDodger2
             }
         }//end of method
 
+        /// <summary>
+        /// Takes an array of enemies, a Player object instance, a GameArea instance, a Coin array and a Random 
+        /// class instance as arguments. Erases previous enemy icons after the enemies have moved and re-draws them as well as
+        /// the coins so their icons do not disappear. Returns void.
+        /// </summary>
+        /// <param name="enemies"></param>
+        /// <param name="player"></param>
+        /// <param name="area"></param>
+        /// <param name="coins"></param>
+        /// <param name="rnd"></param>
         public static void Render(Enemy[] enemies, Player player, GameArea area, Coin[] coins, Random rnd)
         {
             for (int i = 0; i < enemies.Length; i++)
@@ -180,15 +237,6 @@ namespace WaveDodger2
                         }
                         break;
                 }
-                /*
-                for (int j = 0; j < coins.Length; j++) //if the enemy passed over a coin, redraw that coin after it passes
-                {
-                    if (enemies[i].EnemyXPos == coins[j].CoinXPos && enemies[i].EnemyYPos == coins[j].CoinYPos)
-                    {
-                        coins[j].WriteOnScreen();
-                    }
-                }*/
-
             }
             foreach (Coin c in coins)
             {
@@ -206,6 +254,12 @@ namespace WaveDodger2
             ResetColor();
         }
 
+        /// <summary>
+        /// Takes an array of enemies as an argument and draws every instance based on their X and Y coordinates. Is essentially
+        /// a stripped back version of the Render method that only draws the enemies and does not erase any previous enemy icons or 
+        /// re-draw any coins. Returns void.
+        /// </summary>
+        /// <param name="enemies"></param>
         public static void RenderInitial(Enemy[] enemies)
         {
             foreach (Enemy e in enemies)
@@ -220,6 +274,14 @@ namespace WaveDodger2
         #endregion
 
         #region//INTERNAL METHODS
+        /// <summary>
+        /// Takes an array of enemies and a GameArea instance as arguments, and utilizes a checksum to see if all of the 
+        /// enemies have reached their ending position for that specific wave. Returns true if the enemies are at the end of 
+        /// the wave, returns false if not.
+        /// </summary>
+        /// <param name="enemies"></param>
+        /// <param name="area"></param>
+        /// <returns></returns>
         private static bool CheckIfAtEnd(Enemy[] enemies, GameArea area)
         {
             int checksum = 0;
@@ -259,6 +321,12 @@ namespace WaveDodger2
             return (checksum == enemies.Length);
         }
 
+        /// <summary>
+        /// Takes an array of enemies and a GameArea instance as arguments, and erases all of the enemies once they’ve reached
+        /// the end of their wave and replaces their icons with the screengrass of the GameArea instance passed to it. Returns void.
+        /// </summary>
+        /// <param name="enemies"></param>
+        /// <param name="area"></param>
         private static void DeleteWaveAtEnd(Enemy[] enemies, GameArea area)
         {
             foreach(Enemy e in enemies)
@@ -270,6 +338,7 @@ namespace WaveDodger2
             }
         }
         #endregion
+
         #region//PROPERTIES
         public int EnemyXPos
         {
