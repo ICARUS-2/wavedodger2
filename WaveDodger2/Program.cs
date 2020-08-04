@@ -50,13 +50,13 @@ namespace WaveDodger2
         const int EDITOR_MIN_COINS = 1;
         const int EDITOR_MAX_COINS = 50;
         const int EDITOR_MIN_ENEMIES = 1;
-        const int EDITOR_MAX_ENEMIES = 200;
+        const int EDITOR_MAX_ENEMIES = 150;
         const int EDITOR_MIN_DIFFICULTY = 1;
         const int EDITOR_MAX_DIFFICULTY = 4000;
         const int HEIGHT_OFFSET = 3;
         #endregion
 
-        const string RELEASE_VERSION = "1.0";
+        const string RELEASE_VERSION = "1.0.1";
 
         [DllImport("user32.dll")]
         public static extern bool ShowWindow(System.IntPtr hWnd, int cmdShow);
@@ -859,7 +859,7 @@ namespace WaveDodger2
             ForegroundColor = EDITOR_COLOR;
             WriteLine("DIFFICULTY");
             ForegroundColor = ConsoleColor.White;
-            WriteLine("\nEnter the difficulty setting (lower = slower enemies) ({0} - {1})", EDITOR_MIN_DIFFICULTY, EDITOR_MAX_DIFFICULTY);
+            WriteLine("\nEnter the difficulty setting (lower number = faster moving enemies) ({0} - {1})", EDITOR_MIN_DIFFICULTY, EDITOR_MAX_DIFFICULTY);
 
             difficulty = ValInt(EDITOR_MIN_DIFFICULTY, EDITOR_MAX_DIFFICULTY, String.Format("ERROR: DIFFICULTY SETTING CAN ONLY BE BETWEEN {0} AND {1}", EDITOR_MIN_DIFFICULTY, EDITOR_MAX_DIFFICULTY));
 
@@ -1191,7 +1191,7 @@ namespace WaveDodger2
                     ForegroundColor = EDITOR_COLOR;
                     WriteLine("DIFFICULTY SETTING");
                     ResetColor();
-                    WriteLine("\nEnter the difficulty setting (lower = slower enemies) ({0} - {1})", EDITOR_MIN_DIFFICULTY, EDITOR_MAX_DIFFICULTY);
+                    WriteLine("\nEnter the difficulty setting (lower number = faster moving enemies) ({0} - {1})", EDITOR_MIN_DIFFICULTY, EDITOR_MAX_DIFFICULTY);
 
                     difficulty = ValInt(EDITOR_MIN_DIFFICULTY, EDITOR_MAX_DIFFICULTY, String.Format("ERROR: DIFFICULTY SETTING CAN ONLY BE BETWEEN {0} AND {1}", EDITOR_MIN_DIFFICULTY, EDITOR_MAX_DIFFICULTY));
 
@@ -1241,6 +1241,7 @@ namespace WaveDodger2
         /// <param name="editorRunning"></param>
         static void NewCustomGame(Level custom, ref bool editorRunning)
         {
+            Clear();
             bool cycleCollision;
             bool win = false;
             int difficultyCounter = 0;
