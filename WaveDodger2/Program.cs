@@ -52,11 +52,11 @@ namespace WaveDodger2
         const int EDITOR_MIN_ENEMIES = 1;
         const int EDITOR_MAX_ENEMIES = 150;
         const int EDITOR_MIN_DIFFICULTY = 1;
-        const int EDITOR_MAX_DIFFICULTY = 4000;
+        const int EDITOR_MAX_DIFFICULTY = 700;
         const int HEIGHT_OFFSET = 3;
         #endregion
 
-        const string RELEASE_VERSION = "1.0.1";
+        const string RELEASE_VERSION = "1.0.2";
 
         [DllImport("user32.dll")]
         public static extern bool ShowWindow(System.IntPtr hWnd, int cmdShow);
