@@ -52,7 +52,7 @@ namespace WaveDodger2
         const int EDITOR_MIN_ENEMIES = 1;
         const int EDITOR_MAX_ENEMIES = 150;
         const int EDITOR_MIN_DIFFICULTY = 1;
-        const int EDITOR_MAX_DIFFICULTY = 700;
+        const int EDITOR_MAX_DIFFICULTY = 400;
         const int HEIGHT_OFFSET = 3;
         #endregion
 

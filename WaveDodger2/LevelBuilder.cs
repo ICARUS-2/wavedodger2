@@ -62,7 +62,7 @@ namespace WaveDodger2
         public const ConsoleColor LEVEL_2_BORDER_FORE_COLOR = ConsoleColor.DarkGreen;
         public const ConsoleColor LEVEL_2_BORDER_BACK_COLOR = ConsoleColor.Black;
         public const int LEVEL_2_AREA_WIDTH = 75;
-        public const int LEVEL_2_AREA_HEIGHT = 35;
+        public const int LEVEL_2_AREA_HEIGHT = 30;
         public const int LEVEL_2_BORDER_WIDTH = 15;
         //level 2 coin parameters
         public const char LEVEL_2_COIN_CHAR = Coin.DEFAULT_COIN_CHAR;
@@ -95,7 +95,7 @@ namespace WaveDodger2
         public const ConsoleColor LEVEL_3_BORDER_FORE_COLOR = ConsoleColor.DarkYellow;
         public const ConsoleColor LEVEL_3_BORDER_BACK_COLOR = ConsoleColor.Black;
         public const int LEVEL_3_AREA_WIDTH = 90;
-        public const int LEVEL_3_AREA_HEIGHT = 40;
+        public const int LEVEL_3_AREA_HEIGHT = 35;
         public const int LEVEL_3_BORDER_WIDTH = 15;
         //level 3 coin parameters
         public const char LEVEL_3_COIN_CHAR = Coin.DEFAULT_COIN_CHAR;
@@ -103,7 +103,7 @@ namespace WaveDodger2
         public const ConsoleColor LEVEL_3_COIN_BACK_COLOR = Coin.DEFAULT_COIN_BACKCOLOR;
         public const int LEVEL_3_NUMBER_OF_COINS = 20;
         //level 3 enemy parameters
-        public const int LEVEL_3_NUMBER_OF_ENEMIES = 50;
+        public const int LEVEL_3_NUMBER_OF_ENEMIES = 45;
         public const char LEVEL_3_ENEMY_CHAR = Enemy.DEFAULT_ENEMY_CHAR;
         public const ConsoleColor LEVEL_3_ENEMY_FORE_COLOR = Enemy.DEFAULT_ENEMY_FORECOLOR;
         public const ConsoleColor LEVEL_3_ENEMY_BACK_COLOR = Enemy.DEFAULT_ENEMY_BACKCOLOR;
@@ -129,7 +129,7 @@ namespace WaveDodger2
         public const ConsoleColor LEVEL_4_BORDER_FORE_COLOR = ConsoleColor.DarkRed;
         public const ConsoleColor LEVEL_4_BORDER_BACK_COLOR = ConsoleColor.Black;
         public const int LEVEL_4_AREA_WIDTH = 100;
-        public const int LEVEL_4_AREA_HEIGHT = 45;
+        public const int LEVEL_4_AREA_HEIGHT = 35;
         public const int LEVEL_4_BORDER_WIDTH = 15;
         //level 4 coin parameters
         public const char LEVEL_4_COIN_CHAR = Coin.DEFAULT_COIN_CHAR;
@@ -137,7 +137,7 @@ namespace WaveDodger2
         public const ConsoleColor LEVEL_4_COIN_BACK_COLOR = Coin.DEFAULT_COIN_BACKCOLOR;
         public const int LEVEL_4_NUMBER_OF_COINS = 30;
         //level 4 enemy parameters
-        public const int LEVEL_4_NUMBER_OF_ENEMIES = 60;
+        public const int LEVEL_4_NUMBER_OF_ENEMIES = 50;
         public const char LEVEL_4_ENEMY_CHAR = Enemy.DEFAULT_ENEMY_CHAR;
         public const ConsoleColor LEVEL_4_ENEMY_FORE_COLOR = Enemy.DEFAULT_ENEMY_FORECOLOR;
         public const ConsoleColor LEVEL_4_ENEMY_BACK_COLOR = Enemy.DEFAULT_ENEMY_BACKCOLOR;
@@ -163,7 +163,7 @@ namespace WaveDodger2
         public const ConsoleColor LEVEL_5_BORDER_FORE_COLOR = ConsoleColor.DarkMagenta;
         public const ConsoleColor LEVEL_5_BORDER_BACK_COLOR = ConsoleColor.Black;
         public const int LEVEL_5_AREA_WIDTH = 110;
-        public const int LEVEL_5_AREA_HEIGHT = 50;
+        public const int LEVEL_5_AREA_HEIGHT = 36;
         public const int LEVEL_5_BORDER_WIDTH = 20;
         //level 5 coin parameters
         public const char LEVEL_5_COIN_CHAR = Coin.DEFAULT_COIN_CHAR;
@@ -171,12 +171,12 @@ namespace WaveDodger2
         public const ConsoleColor LEVEL_5_COIN_BACK_COLOR = Coin.DEFAULT_COIN_BACKCOLOR;
         public const int LEVEL_5_NUMBER_OF_COINS = 40;
         //level 5 enemy parameters
-        public const int LEVEL_5_NUMBER_OF_ENEMIES = 75;
+        public const int LEVEL_5_NUMBER_OF_ENEMIES = 50;
         public const char LEVEL_5_ENEMY_CHAR = Enemy.DEFAULT_ENEMY_CHAR;
         public const ConsoleColor LEVEL_5_ENEMY_FORE_COLOR = Enemy.DEFAULT_ENEMY_FORECOLOR;
         public const ConsoleColor LEVEL_5_ENEMY_BACK_COLOR = Enemy.DEFAULT_ENEMY_BACKCOLOR;
         //level 5 difficulty parameter
-        public const int LEVEL_5_DIFFICULTY = 25;
+        public const int LEVEL_5_DIFFICULTY = 35;
         //level 5 sound file location
         public const string LEVEL_5_SOUNDLOCATION = @"../../sound/l5-blackswan.wav";
     }
